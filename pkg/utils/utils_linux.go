@@ -60,8 +60,8 @@ func GetSysInfo() string {
 	}
 
 	return fmt.Sprintf(`
-Kernel: 
+Kernel:
 %s
-OS: 
+OS:
 %s`, kernel, osVersion)
 }

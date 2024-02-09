@@ -32,7 +32,7 @@ test_load_dump_with_small_dir(){
   python3 .github/scripts/db.py --name dump_small_dir --result $runtime --version $version --meta $META --storage file
   ./juicefs mount $META_URL /jfs -d --no-usage-report
   inode=$(df -i /jfs | grep JuiceFS |awk -F" " '{print $3}')
-  if [ "$inode" -ne "2233313" ]; then 
+  if [ "$inode" -ne "2233313" ]; then
     echo "<FATAL>: inode error: $inode"
     exit 1
   fi
@@ -75,7 +75,7 @@ do_load_dump_with_big_dir(){
   df -i /jfs
   inode=$(df -i /jfs | grep JuiceFS |awk -F" " '{print $3}')
   echo "inode: $inode"
-  if [ "$inode" -ne "1000003" ]; then 
+  if [ "$inode" -ne "1000003" ]; then
     echo "<FATAL>: inode error: $inode"
     exit 1
   fi
@@ -90,7 +90,7 @@ test_list_with_big_dir(){
   echo "list cost $runtime seconds"
   version=$(./juicefs -V|cut -b 17- | sed 's/:/-/g')
   python3 .github/scripts/db.py --name list_big_dir --result $runtime --version $version --meta $META --storage file
-  if [ "$file_count" -ne "1000001" ]; then 
+  if [ "$file_count" -ne "1000001" ]; then
     echo "<FATAL>: file_count error: $file_count"
     exit 1
   fi
@@ -111,4 +111,4 @@ prepare_test()
 
 source .github/scripts/common/run_test.sh && run_test $@
 
-          
+

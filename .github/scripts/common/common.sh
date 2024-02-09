@@ -25,7 +25,7 @@ umount_jfs()
 }
 
 wait_mount_process_killed()
-{   
+{
     pid=$1
     wait_seconds=$2
     [[ -z "$pid" ]] && echo "pid is empty" && exit 1

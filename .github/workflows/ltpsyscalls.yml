@@ -49,11 +49,11 @@ jobs:
 
       - name: Build
         uses: ./.github/actions/build
-        with: 
+        with:
           target: ${{steps.vars.outputs.target}}
 
       - name: Prepare meta db
-        run: | 
+        run: |
           chmod +x .github/scripts/start_meta_engine.sh
           source .github/scripts/start_meta_engine.sh
           start_meta_engine ${{matrix.meta}}
@@ -126,7 +126,7 @@ jobs:
         uses: juicedata/slack-notify-action@main
         with:
           channel-id: "${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}"
-          slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"  
+          slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"
 
       - name: Setup upterm session
         if: failure() && (github.event.inputs.debug == 'true' || github.run_attempt != 1)

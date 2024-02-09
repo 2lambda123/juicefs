@@ -29,16 +29,16 @@ generate_fsrand(){
 }
 
 test_sync_with_mount_point(){
-    do_sync_with_mount_point 
+    do_sync_with_mount_point
     do_sync_with_mount_point --list-threads 10 --list-depth 5
-    do_sync_with_mount_point --dirs --update --perms --check-all 
+    do_sync_with_mount_point --dirs --update --perms --check-all
     do_sync_with_mount_point --dirs --update --perms --check-all --list-threads 10 --list-depth 5
 }
 
 test_sync_without_mount_point(){
-    do_sync_without_mount_point 
+    do_sync_without_mount_point
     do_sync_without_mount_point --list-threads 10 --list-depth 5
-    do_sync_without_mount_point --dirs --update --perms --check-all 
+    do_sync_without_mount_point --dirs --update --perms --check-all
     do_sync_without_mount_point --dirs --update --perms --check-all --list-threads 10 --list-depth 5
 }
 
@@ -97,9 +97,9 @@ test_sync_with_deep_link(){
 
 skip_test_sync_fsrand_with_mount_point(){
     generate_fsrand
-    do_test_sync_fsrand_with_mount_point 
+    do_test_sync_fsrand_with_mount_point
     do_test_sync_fsrand_with_mount_point --list-threads 10 --list-depth 5
-    do_test_sync_fsrand_with_mount_point --dirs --update --perms --check-all 
+    do_test_sync_fsrand_with_mount_point --dirs --update --perms --check-all
     do_test_sync_fsrand_with_mount_point --dirs --update --perms --check-all --list-threads 10 --list-depth 5
 }
 
@@ -127,16 +127,16 @@ test_sync_include_exclude_option(){
     ./juicefs format --trash-days 0 $META_URL myjfs
     ./juicefs mount $META_URL /jfs -d
     ./juicefs sync jfs_source/ /jfs/
-    for source_dir in "/jfs/" "jfs_source/" ; do 
+    for source_dir in "/jfs/" "jfs_source/" ; do
         while IFS=, read -r jfs_option rsync_option status; do
             printf '\n%s, %s, %s\n' "$jfs_option" "$rsync_option" "$status"
             status=$(echo $status| xargs)
-            if [[ -z "$status" || "$status" = "disable" ]]; then 
+            if [[ -z "$status" || "$status" = "disable" ]]; then
                 continue
             fi
-            if [ "$source_dir" == "/jfs/" ]; then 
-                jfs_option="--exclude .stats --exclude .config $jfs_option " 
-                rsync_option="--exclude .stats --exclude .config $rsync_option " 
+            if [ "$source_dir" == "/jfs/" ]; then
+                jfs_option="--exclude .stats --exclude .config $jfs_option "
+                rsync_option="--exclude .stats --exclude .config $rsync_option "
             fi
             rm rsync_dir/ -rf && mkdir rsync_dir
             set -o noglob
@@ -144,8 +144,8 @@ test_sync_include_exclude_option(){
             rm jfs_sync_dir/ -rf && mkdir jfs_sync_dir/
             ./juicefs sync $source_dir jfs_sync_dir/ $jfs_option --list-threads 2
             set -u noglob
-            printf 'juicefs sync %s %s %s\n' "$source_dir"  "jfs_sync_dir/" "$jfs_option" 
-            printf 'rsync %s %s %s\n' "$source_dir" "rsync_dir/"  "$rsync_option" 
+            printf 'juicefs sync %s %s %s\n' "$source_dir"  "jfs_sync_dir/" "$jfs_option"
+            printf 'rsync %s %s %s\n' "$source_dir" "rsync_dir/"  "$rsync_option"
             printf 'diff between juicefs sync and rsync:\n'
             diff -ur jfs_sync_dir rsync_dir
         done < .github/workflows/resources/sync-options.txt
@@ -163,7 +163,7 @@ test_ignore_existing()
     echo abcde > /tmp/src_dir/d1/d1file1
     echo 123456 > /tmp/jfs_sync_dir/d1/d1file1
     cp -rf /tmp/jfs_sync_dir/ /tmp/rsync_dir
-    
+
     mkdir /tmp/src_dir/no-exist-dir
     echo 1111 > /tmp/src_dir/no-exist-dir/f1
     echo 123456 > /tmp/src_dir/d1/no-exist-file
@@ -171,7 +171,7 @@ test_ignore_existing()
     ./juicefs sync /tmp/src_dir /tmp/jfs_sync_dir --existing
     rsync -r /tmp/src_dir/ /tmp/rsync_dir --existing --size-only
     diff -ur /tmp/jfs_sync_dir /tmp/rsync_dir
-    
+
     rm -rf /tmp/src_dir /tmp/rsync_dir
     mkdir -p /tmp/src_dir/d1
     mkdir -p /tmp/jfs_sync_dir/d1
@@ -182,8 +182,8 @@ test_ignore_existing()
     echo abc > /tmp/src_dir/file2
     echo abcde > /tmp/src_dir/d1/d1file2
     cp -rf /tmp/jfs_sync_dir/ /tmp/rsync_dir
-    
-    ./juicefs sync /tmp/src_dir /tmp/jfs_sync_dir --ignore-existing 
+
+    ./juicefs sync /tmp/src_dir /tmp/jfs_sync_dir --ignore-existing
     rsync -r /tmp/src_dir/ /tmp/rsync_dir --ignore-existing --size-only
     diff -ur /tmp/jfs_sync_dir /tmp/rsync_dir
 }
