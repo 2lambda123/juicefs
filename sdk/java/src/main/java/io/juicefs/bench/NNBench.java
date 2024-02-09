@@ -19,6 +19,7 @@ package io.juicefs.bench;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import io.github.pixee.security.BoundedLineReader;
 import io.juicefs.Main;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -160,7 +161,7 @@ public class NNBench extends Main.Command {
     String resultALLine1 = null;
 
     String line;
-    while ((line = lines.readLine()) != null) {
+    while ((line = BoundedLineReader.readLine(lines, 5_000_000)) != null) {
       StringTokenizer tokens = new StringTokenizer(line, " \t\n\r\f%;");
       String attr = tokens.nextToken();
       if (attr.endsWith(":totalTime")) {

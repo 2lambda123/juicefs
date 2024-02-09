@@ -12,22 +12,22 @@ on:
         type: string
         description: "Target tests, eg: io.juicefs.JuiceFileSystemTest"
         required: true
-        default: ""  
+        default: ""
       targetClasses:
         type: string
         description: "Target classes, eg: io.juicefs.JuiceFileSystemImpl*"
         required: true
-        default: ""  
+        default: ""
       timeoutConstant:
         type: int
         description: "Timeout constant"
         required: true
-        default: 1000  
+        default: 1000
       debug:
         type: boolean
         description: "Run the build with tmate debugging enabled"
         required: false
-        default: false  
+        default: false
 
 jobs:
   mutate-test-sdk:
@@ -58,7 +58,7 @@ jobs:
           touch /jfs/inner_sym_target
           echo "hello juicefs" > /jfs/inner_sym_target
           cd /jfs
-          ln -s inner_sym_target inner_sym_link 
+          ln -s inner_sym_target inner_sym_link
           mkdir etc
           chmod 777 etc
           echo `hostname` > etc/nodes

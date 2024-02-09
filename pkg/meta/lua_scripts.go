@@ -89,7 +89,7 @@ local function resolve(parent, path, uid, gids)
             error("ENOTSUP")
         elseif _type ~= 2 then
             error("ENOTDIR")
-        elseif parent > 1 and not can_access(parent, uid, gids) then 
+        elseif parent > 1 and not can_access(parent, uid, gids) then
             error("EACCESS")
         end
         _type, parent = lookup(parent, name)

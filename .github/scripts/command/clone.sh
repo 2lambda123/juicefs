@@ -54,7 +54,7 @@ skip_test_clone_with_fsrand()
     seed=$(date +%s)
     python3 .github/scripts/fsrand.py -a -c 2000 -s $seed  /jfs/juicefs
     do_clone true
-    do_clone false 
+    do_clone false
 }
 
 do_clone()
@@ -99,7 +99,7 @@ test_clone_with_random_write(){
     prepare_test
     ./juicefs format $META_URL myjfs
     ./juicefs mount -d $META_URL /jfs
-    PATH1=/tmp/test PATH2=/jfs/test python3 .github/scripts/random_read_write.py 
+    PATH1=/tmp/test PATH2=/jfs/test python3 .github/scripts/random_read_write.py
     ./juicefs clone /jfs/test /jfs/test1
     rm /jfs/test -rf
     diff /tmp/test /jfs/test1
@@ -180,4 +180,3 @@ check_guid_after_clone(){
 }
 
 source .github/scripts/common/run_test.sh && run_test $@
-

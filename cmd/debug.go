@@ -455,7 +455,7 @@ func collectLog(ctx *cli.Context, cmd string, requireRootPrivileges bool, currDi
 
 func collectSysInfo(ctx *cli.Context, currDir string) error {
 	sysInfo := utils.GetSysInfo()
-	result := fmt.Sprintf(`Platform: 
+	result := fmt.Sprintf(`Platform:
 %s %s
 %s`, runtime.GOOS, runtime.GOARCH, sysInfo)
 
