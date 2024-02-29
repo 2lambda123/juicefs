@@ -2,7 +2,7 @@ repo_name: 2lambda123/juicefs
 report_id: d100019b0868a72265405dd96656772d
 version: 0.1
 repo_type: Public
-timestamp: '2024-01-09T06:53:49+00:00'
+timestamp: '2024-02-29T19:17:56+00:00'
 requested_by: 2lambda123
 provider: github
 branch: main
@@ -756,8 +756,8 @@ tools:
   last_updated_by: dependabot[bot]
   last_updated_on: 2023-12-02 21:54:41.000000000 Z
 - name: go-cleanhttp
-  description: 'Cleanhttp Functions for accessing "clean" Go http.Client values The
-    Go standard library contains a default called '
+  description: Cleanhttp Functions for accessing "clean" Go http.Client values The
+    Go standard library contains a default called
   package_url: https://pkg.go.dev/github.com/hashicorp/go-cleanhttp
   version: 0.5.0
   license: MPL-2.0
