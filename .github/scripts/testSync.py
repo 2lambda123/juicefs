@@ -137,4 +137,4 @@ if __name__ == "__main__":
     test_sync_with_random_text()
     test_sync_with_nested_dir()
     test_sync_with_path_entry()
-    
+

@@ -72,7 +72,7 @@ class TreeComparator(object):
             f2 = os.path.join(d2, f)
             try:
                 s1 = os.stat(f1)
-                s2 = os.stat(f2)                    
+                s2 = os.stat(f2)
                 for attr in ['st_mode', 'st_nlink', 'st_uid', 'st_gid', 'st_size']:
                     if getattr(s1, attr) != getattr(s2, attr):
                         print(f'{attr} mismatch with {f1}:{getattr(s1, attr)} and {f2}:{getattr(s2, attr)}')

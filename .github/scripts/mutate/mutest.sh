@@ -61,7 +61,7 @@ mv $MUTATE_ORIGINAL $MUTATE_ORIGINAL.tmp
 cp $MUTATE_CHANGED $MUTATE_ORIGINAL
 echo "------------------------------------------------------------------------"
 echo "Start unit test with: $MUTATE_CHANGED"
-go test ./$PACKAGE_PATH/...  -run "$test_cases" -v -cover -count=1 -timeout=5m 
+go test ./$PACKAGE_PATH/...  -run "$test_cases" -v -cover -count=1 -timeout=5m
 # GOMUTESTING_TEST=$(go test -timeout $(printf '%ds' $MUTATE_TIMEOUT) $MUTATE_PACKAGE$TEST_RECURSIVE 2>&1)
 export GOMUTESTING_RESULT=$?
 

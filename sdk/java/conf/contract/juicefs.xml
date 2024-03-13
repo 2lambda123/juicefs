@@ -10,7 +10,7 @@
 	<property>
 		<name>juicefs.no-usage-report</name>
 		<value>true</value>
-	</property>	
+	</property>
 	<property>
 		<name>juicefs.names</name>
 		<value>a.local,b.local,c.local,d.local,e.local</value>

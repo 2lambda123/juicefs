@@ -100,7 +100,7 @@ prepare_test(){
     umount_jfs /jfs $META_URL
     umount_jfs /jfs2 sqlite3://test2.db
     python3 .github/scripts/flush_meta.py $META_URL
-    rm test2.db -rf 
+    rm test2.db -rf
     rm -rf /var/jfs/myjfs || true
     mc rm --force --recursive myminio/test || true
 }
@@ -112,7 +112,7 @@ do_dump_load(){
     python3 .github/scripts/fsrand.py -c 1000 /jfs/fsrand -v -a
     ./juicefs dump  $META_URL $dump_file
 
-    ./juicefs load  sqlite3://test2.db $dump_file   
+    ./juicefs load  sqlite3://test2.db $dump_file
     ./juicefs mount -d sqlite3://test2.db /jfs2
 
     diff -ur /jfs/fsrand /jfs2/fsrand --no-dereference
