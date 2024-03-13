@@ -2,14 +2,14 @@ name: "gateway-test"
 
 on:
   push:
-    branches: 
+    branches:
       - release-**
     paths-ignore:
       - 'docs/**'
       - '**.md'
   pull_request:
     #The branches below must be a subset of the branches above
-    branches: 
+    branches:
       - release-**
     paths-ignore:
       - 'docs/**'
@@ -66,12 +66,12 @@ jobs:
 
     runs-on: ubuntu-20.04
 
-    steps: 
+    steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
-      
+
       - name: Set Variable
         id: vars
         run: |
@@ -83,22 +83,22 @@ jobs:
 
       - name: Build
         uses: ./.github/actions/build
-        with: 
+        with:
           target: ${{steps.vars.outputs.target}}
 
-            
+
       - name: Start meta
-        run: | 
+        run: |
           sudo chmod +x .github/scripts/start_meta_engine.sh
           source .github/scripts/start_meta_engine.sh
           start_meta_engine ${{matrix.meta}}
 
       - name: Install tools
-        run: | 
+        run: |
           wget -q https://dl.minio.io/client/mc/release/linux-amd64/mc
-          chmod +x mc 
+          chmod +x mc
         shell: bash
-        
+
       - name: start gateway
         shell: bash
         run: |
@@ -111,14 +111,14 @@ jobs:
           export MINIO_ROOT_PASSWORD=minioadmin
           ./juicefs format $meta_url $volume --trash-days 0
           ./juicefs gateway $meta_url localhost:8080 --no-usage-report --access-log /tmp/access1.log &
-        
+
       - name: Sync with multiple process
         shell: bash
         run: |
           source .github/scripts/start_meta_engine.sh
           meta_url=$(get_meta_url ${{matrix.meta}})
           file_size=${{matrix.file_size}}
-          if [ $file_size="100M" ]; then 
+          if [ $file_size="100M" ]; then
             file_count=5
           else
             file_count=2000
@@ -126,14 +126,14 @@ jobs:
           threads=20
           mp=/tmp/myjfs
           volume=myjfs
-          
+
           dd if=/dev/urandom of=file iflag=fullblock,count_bytes bs=4k count="$file_size" > /dev/null
           mkdir data
           for i in $(seq 1 $file_count); do
             cp file data/file$i
           done
           start=`date +%s`
-          declare -a pids   
+          declare -a pids
           ./juicefs sync --dirs data/  s3://minioadmin:minioadmin@localhost:8080/$volume/data/ --no-https -p $threads &
           pids+=($!)
           ./juicefs sync --dirs data/  s3://minioadmin:minioadmin@localhost:8080/$volume/data/ --no-https -p $threads &
@@ -148,13 +148,13 @@ jobs:
           end=`date +%s`
           time=$((end-start))
           echo time cost is: $time second
-          killall juicefs 
+          killall juicefs
           sleep 3
           ./juicefs mount -d $meta_url $mp --no-usage-report
-          diff -ur data/ $mp/data/ 
+          diff -ur data/ $mp/data/
           echo "diff succeed"
           ./juicefs umount  $mp --force
-        
+
       - name: Sync with empty dir
         run: |
           source .github/scripts/start_meta_engine.sh
@@ -168,7 +168,7 @@ jobs:
           ./juicefs gateway $meta_url localhost:8080 --access-log /tmp/access1.log &
           sleep 10
           mkdir emptydir
-          declare -a pids  
+          declare -a pids
           ./juicefs sync emptydir/ s3://minioadmin:minioadmin@localhost:8080/$volume/test/ --delete-dst --no-https -p $threads &
           pids+=($!)
           ./juicefs sync emptydir/ s3://minioadmin:minioadmin@localhost:8080/$volume/test/ --delete-dst --no-https -p $threads &
@@ -179,14 +179,14 @@ jobs:
           killall juicefs
           sleep 3
           ./juicefs mount -d $meta_url $mp --no-usage-report
-          [ -d "$mp/test/" ] && exit 1 
+          [ -d "$mp/test/" ] && exit 1
           ./juicefs umount  $mp --force
         shell: bash
 
       - name: log
         if: always()
         shell: bash
-        run: | 
+        run: |
           if [ -f ~/.juicefs/juicefs.log ]; then
             tail -300 ~/.juicefs/juicefs.log
             grep "<FATAL>:" ~/.juicefs/juicefs.log && exit 1 || true

@@ -7,17 +7,17 @@ import subprocess
 import logging
 import json
 import stat
-try: 
+try:
     __import__('psutil')
 except ImportError:
     subprocess.check_call(["pip", "install", "psutil"])
 import psutil
-try: 
+try:
     __import__('fallocate')
 except ImportError:
     subprocess.check_call(["pip", "install", "fallocate"])
 import fallocate
-try: 
+try:
     __import__('xattr')
 except ImportError:
     subprocess.check_call(["pip", "install", "xattr"])
@@ -93,7 +93,7 @@ def get_stat(path):
         lstat = os.lstat(path)
         print(f'{path} is good link: {stat}\n{lstat}')
         return stat.st_gid, stat.st_uid,  stat.st_size, oct(stat.st_mode), stat.st_nlink, \
-            lstat.st_gid, lstat.st_uid, oct(lstat.st_mode), 
+            lstat.st_gid, lstat.st_uid, oct(lstat.st_mode),
     elif os.path.islink(path) and not os.path.exists(path): # broken link
         lstat = os.lstat(path)
         print(f'{path} is broken link: {lstat}')
@@ -140,12 +140,12 @@ class Statistics:
         return self.stats
 
 @seed(random.randint(10000, 1000000))
-@settings(verbosity=Verbosity.debug, 
-    max_examples=MAX_EXAMPLE, 
-    stateful_step_count=STEP_COUNT, 
+@settings(verbosity=Verbosity.debug,
+    max_examples=MAX_EXAMPLE,
+    stateful_step_count=STEP_COUNT,
     derandomize = DERANDOMIZE,
-    deadline=None, 
-    report_multiple_bugs=False, 
+    deadline=None,
+    report_multiple_bugs=False,
     phases=[Phase.explicit, Phase.reuse, Phase.generate, Phase.target, Phase.shrink, Phase.explain ])
 class JuicefsMachine(RuleBasedStateMachine):
     Files = Bundle('files')
@@ -153,14 +153,14 @@ class JuicefsMachine(RuleBasedStateMachine):
     FilesWithXattr = Bundle('files_with_xattr')
     stats = Statistics()
     start = time.time()
-    
+
     @initialize(target=Folders)
     def init_folders(self):
         print('init_folders')
         # self.init_folder(ROOT_DIR1)
         # self.init_folder(ROOT_DIR2)
         return ""
-    
+
     def init_folder(self, dir):
         for i in range(1, 1200):
             file = os.path.join(dir, f'file{i}')
@@ -202,7 +202,7 @@ class JuicefsMachine(RuleBasedStateMachine):
             return os.path.join(parent, file_name)
         else:
             return INVALID_FILE
-    
+
     def do_open(self, root_dir, parent, file_name, flags, mode):
         loggers[f'{root_dir}'].debug(f'do_open {root_dir} {parent} {file_name} {flags} {mode}')
         abspath = os.path.join(root_dir, parent, file_name)
@@ -219,7 +219,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         assert os.path.isfile(abspath), f'do_open: {abspath} should be file'
         self.stats.success('do_open')
         loggers[f'{root_dir}'].info(f'do_open {abspath} {flags} {mode} succeed')
-        return get_stat(abspath)  
+        return get_stat(abspath)
 
     @rule(file=Files, offset=st_offset, content = st_content)
     @precondition(lambda self: 'write' not in EXCLUDE_RULES)
@@ -227,7 +227,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         result1 = self.do_write(ROOT_DIR1, file, offset, content)
         result2 = self.do_write(ROOT_DIR2, file, offset, content)
         assert self.equal(result1, result2), f'write:\nresult1 is {result1}\nresult2 is {result2}'
-    
+
     def do_write(self, root_dir, file, offset, content):
         loggers[f'{root_dir}'].debug(f'do_write {root_dir} {file} {offset}')
         abspath = os.path.join(root_dir, file)
@@ -252,7 +252,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         loggers[f'{root_dir}'].info(f'do_write {abspath} {offset} succeed')
         return get_stat(abspath)
 
-    @rule(file = Files, 
+    @rule(file = Files,
           offset = st.integers(min_value=0, max_value=MAX_FILE_SIZE),
           length = st.integers(min_value=0, max_value=MAX_FALLOCATE_LENGTH),
           mode = st.just(0))
@@ -261,7 +261,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         result1 = self.do_fallocate(ROOT_DIR1, file, offset, length, mode)
         result2 = self.do_fallocate(ROOT_DIR2, file, offset, length, mode)
         assert self.equal(result1, result2), f'fallocate:\nresult1 is {result1}\nresult2 is {result2}'
-    
+
     def do_fallocate(self, root_dir, file, offset, length, mode):
         loggers[f'{root_dir}'].debug(f'do_fallocate {root_dir} {file} {offset} {length} {mode}')
         abspath = os.path.join(root_dir, file)
@@ -291,7 +291,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         result1 = self.do_read(ROOT_DIR1, file, pos, length)
         result2 = self.do_read(ROOT_DIR2, file, pos, length)
         assert self.equal(result1, result2), f'read:\nresult1 is {result1}\nresult2 is {result2}'
-    
+
     def do_read(self, root_dir, file, pos, length):
         loggers[f'{root_dir}'].debug(f'do_read {root_dir} {file} {pos} {length}')
         abspath = os.path.join(root_dir, file)
@@ -323,7 +323,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         result1 = self.do_truncate(ROOT_DIR1, file, size)
         result2 = self.do_truncate(ROOT_DIR2, file, size)
         assert self.equal(result1, result2), f'truncate:\nresult1 is {result1}\nresult2 is {result2}'
-    
+
     def do_truncate(self, root_dir, file, size):
         loggers[f'{root_dir}'].debug(f'do_truncate {root_dir} {file} {size}')
         abspath = os.path.join(root_dir, file)
@@ -352,7 +352,7 @@ class JuicefsMachine(RuleBasedStateMachine):
             return os.path.join(parent, file_name)
         else:
             return INVALID_FILE
-    
+
     def do_create_file(self, root_dir, parent, file_name, content):
         relpath = os.path.join(parent, file_name)
         abspath = os.path.join(root_dir, relpath)
@@ -367,7 +367,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         self.stats.success('do_create_file')
         loggers[f'{root_dir}'].info(f'do_create_file {abspath} succeed')
         return get_stat(abspath)
-    
+
     @rule(target=Files, parent = Folders, file_name = st_entry_name, mode = st_file_mode)
     @precondition(lambda self: 'mkfifo' not in EXCLUDE_RULES)
     def mkfifo(self, parent, file_name, mode):
@@ -378,7 +378,7 @@ class JuicefsMachine(RuleBasedStateMachine):
             return os.path.join(parent, file_name)
         else:
             return INVALID_FILE
-    
+
     def do_mkfifo(self, root_dir, parent, file_name, mode):
         abspath = os.path.join(root_dir, parent, file_name)
         try:
@@ -403,7 +403,7 @@ class JuicefsMachine(RuleBasedStateMachine):
     def do_listdir(self, root_dir, dir):
         abspath = os.path.join(root_dir, dir)
         try:
-            li = os.listdir(abspath) 
+            li = os.listdir(abspath)
             li = sorted(list(filter(lambda x: x not in JFS_CONTROL_FILES, li)))
         except Exception as e:
             self.stats.failure('do_listdir')
@@ -431,7 +431,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         assert not os.path.exists(abspath), f'do_unlink: {abspath} should not exist'
         self.stats.success('do_unlink')
         loggers[f'{root_dir}'].info(f'do_unlink {abspath} succeed')
-        return () 
+        return ()
 
     @rule( target=Files, entry = Files, parent = Folders, new_entry_name = st_entry_name )
     @precondition(lambda self: 'rename_file' not in EXCLUDE_RULES)
@@ -443,7 +443,7 @@ class JuicefsMachine(RuleBasedStateMachine):
             return os.path.join(parent, new_entry_name)
         else:
             return INVALID_FILE
-        
+
     @rule( target=Folders, entry = Folders, parent = Folders, new_entry_name = st_entry_name )
     @precondition(lambda self: 'rename_dir' not in EXCLUDE_RULES)
     def rename_dir(self, entry, parent, new_entry_name):
@@ -472,7 +472,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         loggers[f'{root_dir}'].info(f'do_rename {abspath} {new_abspath} succeed')
         return get_stat(new_abspath)
 
-    @rule( target=Files, entry = Files, parent = Folders, new_entry_name = st_entry_name, 
+    @rule( target=Files, entry = Files, parent = Folders, new_entry_name = st_entry_name,
           follow_symlinks = st.booleans() )
     @precondition(lambda self: 'copy_file' not in EXCLUDE_RULES)
     def copy_file(self, entry, parent, new_entry_name, follow_symlinks):
@@ -501,7 +501,7 @@ class JuicefsMachine(RuleBasedStateMachine):
 
     @rule( target=Folders, entry = Folders.filter(lambda x: x != ''), parent = Folders, new_entry_name = st_entry_name,
           symlinks=st.booleans(),
-          ignore_dangling_symlinks=st.booleans(), 
+          ignore_dangling_symlinks=st.booleans(),
           dir_exist_ok=st.booleans())
     @precondition(lambda self: 'copy_tree' not in EXCLUDE_RULES)
     def copy_tree(self, entry, parent, new_entry_name, symlinks, ignore_dangling_symlinks, dir_exist_ok):
@@ -555,7 +555,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         self.stats.success('do_mkdir')
         loggers[f'{root_dir}'].info(f'do_mkdir {abspath} succeed')
         return get_stat(abspath)
-    
+
     @rule( dir = Folders )
     @precondition(lambda self: 'rmdir' not in EXCLUDE_RULES)
     def rmdir(self, dir):
@@ -603,7 +603,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         self.stats.success('do_hardlink')
         loggers[f'{root_dir}'].info(f'do_hardlink {dest_abs_path} {link_abs_path} succeed')
         return get_stat(link_abs_path)
-    
+
     @rule(target = Files , dest_file = Files, parent = Folders, link_file_name = st_entry_name )
     @precondition(lambda self: 'symlink' not in EXCLUDE_RULES)
     def symlink(self, dest_file, parent, link_file_name):
@@ -630,9 +630,9 @@ class JuicefsMachine(RuleBasedStateMachine):
         loggers[f'{root_dir}'].info(f'do_symlink {dest_abs_path} {link_abs_path} succeed')
         return get_stat(link_abs_path)
 
-    @rule(target=FilesWithXattr, file = Files.filter(lambda f: f != ''), 
+    @rule(target=FilesWithXattr, file = Files.filter(lambda f: f != ''),
         name = st_xattr_name,
-        value = st_xattr_value, 
+        value = st_xattr_value,
         flag = st.sampled_from([xattr.XATTR_CREATE, xattr.XATTR_REPLACE])
         )
     @precondition(lambda self: 'set_xattr' not in EXCLUDE_RULES)
@@ -644,7 +644,7 @@ class JuicefsMachine(RuleBasedStateMachine):
             return file
         else:
             return INVALID_FILE
-    
+
     def do_set_xattr(self, root_dir, file, name, value, flag):
         abspath = os.path.join(root_dir, file)
         try:
@@ -664,7 +664,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         result1 = self.do_remove_xattr(ROOT_DIR1, file)
         result2 = self.do_remove_xattr(ROOT_DIR2, file)
         assert self.equal(result1, result2), f'remove_xattr:\nresult1 is {result1}\nresult2 is {result2}'
-    
+
     def do_remove_xattr(self, root_dir, file):
         abspath = os.path.join(root_dir, file)
         try:
@@ -747,7 +747,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         result1 = self.do_chown(ROOT_DIR1, dir, owner)
         result2 = self.do_chown(ROOT_DIR2, dir, owner)
         assert self.equal(result1, result2), f'chown_dir:\nresult1 is {result1}\nresult2 is {result2}'
-    
+
     def do_chown(self, root_dir, entry, owner):
         abspath = os.path.join(root_dir, entry)
         info = pwd.getpwnam(owner)
@@ -762,7 +762,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         self.stats.success('do_chown')
         loggers[f'{root_dir}'].info(f"do_chown {abspath} {owner} succeed")
         return get_stat(abspath)
-     
+
 def compare_content(dir1, dir2):
     if not os.path.exists(dir1) and not os.path.exists(dir2):
         return True
@@ -805,4 +805,4 @@ if __name__ == '__main__':
     if COMPARE:
         compare_content(ROOT_DIR1, ROOT_DIR2)
         compare_stat(ROOT_DIR1, ROOT_DIR2)
-    
+

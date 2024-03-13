@@ -361,24 +361,24 @@ roa/...,110592,6,15
 
 ```shell
 $ juicefs gc sqlite3://myjfs.db
-Pending deleted files: 0                            0.0/s         
- Pending deleted data: 0.0 b   (0 Bytes)            0.0 b/s       
-Cleaned pending files: 0                            0.0/s         
- Cleaned pending data: 0.0 b   (0 Bytes)            0.0 b/s       
-        Listed slices: 4437                         82800.0/s     
-         Trash slices: 0                            0.0/s         
-           Trash data: 0.0 b   (0 Bytes)            0.0 b/s       
- Cleaned trash slices: 0                            0.0/s         
-   Cleaned trash data: 0.0 b   (0 Bytes)            0.0 b/s       
+Pending deleted files: 0                            0.0/s
+ Pending deleted data: 0.0 b   (0 Bytes)            0.0 b/s
+Cleaned pending files: 0                            0.0/s
+ Cleaned pending data: 0.0 b   (0 Bytes)            0.0 b/s
+        Listed slices: 4437                         82800.0/s
+         Trash slices: 0                            0.0/s
+           Trash data: 0.0 b   (0 Bytes)            0.0 b/s
+ Cleaned trash slices: 0                            0.0/s
+   Cleaned trash data: 0.0 b   (0 Bytes)            0.0 b/s
       Scanned objects: 4741/4741 [==============================================================]  387369.2/s used: 12.247821ms
-        Valid objects: 4741                         395521.0/s    
-           Valid data: 1.7 GiB (1846388716 Bytes)   143.6 GiB/s   
-    Compacted objects: 0                            0.0/s         
-       Compacted data: 0.0 b   (0 Bytes)            0.0 b/s       
-       Leaked objects: 0                            0.0/s         
-          Leaked data: 0.0 b   (0 Bytes)            0.0 b/s       
-      Skipped objects: 0                            0.0/s         
-         Skipped data: 0.0 b   (0 Bytes)            0.0 b/s       
+        Valid objects: 4741                         395521.0/s
+           Valid data: 1.7 GiB (1846388716 Bytes)   143.6 GiB/s
+    Compacted objects: 0                            0.0/s
+       Compacted data: 0.0 b   (0 Bytes)            0.0 b/s
+       Leaked objects: 0                            0.0/s
+          Leaked data: 0.0 b   (0 Bytes)            0.0 b/s
+      Skipped objects: 0                            0.0/s
+         Skipped data: 0.0 b   (0 Bytes)            0.0 b/s
 2023/06/09 10:14:33.683384 juicefs[280403] <INFO>: scanned 4741 objects, 4741 valid, 0 compacted (0 bytes), 0 leaked (0 bytes), 0 delslices (0 bytes), 0 delfiles (0 bytes), 0 skipped (0 bytes) [gc.go:379]
 ```
 
@@ -388,27 +388,27 @@ Cleaned pending files: 0                            0.0/s
 
 ```shell
 $ juicefs gc sqlite3://myjfs.db --delete
-Cleaned pending slices: 0                            0.0/s         
- Pending deleted files: 0                            0.0/s         
-  Pending deleted data: 0.0 b   (0 Bytes)            0.0 b/s       
- Cleaned pending files: 0                            0.0/s         
-  Cleaned pending data: 0.0 b   (0 Bytes)            0.0 b/s       
-         Cleaned trash: 0                            0.0/s         
-Cleaned detached nodes: 0                            0.0/s         
-         Listed slices: 4437                         75803.6/s     
-          Trash slices: 0                            0.0/s         
-            Trash data: 0.0 b   (0 Bytes)            0.0 b/s       
-  Cleaned trash slices: 0                            0.0/s         
-    Cleaned trash data: 0.0 b   (0 Bytes)            0.0 b/s       
+Cleaned pending slices: 0                            0.0/s
+ Pending deleted files: 0                            0.0/s
+  Pending deleted data: 0.0 b   (0 Bytes)            0.0 b/s
+ Cleaned pending files: 0                            0.0/s
+  Cleaned pending data: 0.0 b   (0 Bytes)            0.0 b/s
+         Cleaned trash: 0                            0.0/s
+Cleaned detached nodes: 0                            0.0/s
+         Listed slices: 4437                         75803.6/s
+          Trash slices: 0                            0.0/s
+            Trash data: 0.0 b   (0 Bytes)            0.0 b/s
+  Cleaned trash slices: 0                            0.0/s
+    Cleaned trash data: 0.0 b   (0 Bytes)            0.0 b/s
        Scanned objects: 4741/4741 [==============================================================]  337630.2/s used: 14.056704ms
-         Valid objects: 4741                         345974.4/s    
-            Valid data: 1.7 GiB (1846388716 Bytes)   125.6 GiB/s   
-     Compacted objects: 0                            0.0/s         
-        Compacted data: 0.0 b   (0 Bytes)            0.0 b/s       
-        Leaked objects: 0                            0.0/s         
-           Leaked data: 0.0 b   (0 Bytes)            0.0 b/s       
-       Skipped objects: 0                            0.0/s         
-          Skipped data: 0.0 b   (0 Bytes)            0.0 b/s       
+         Valid objects: 4741                         345974.4/s
+            Valid data: 1.7 GiB (1846388716 Bytes)   125.6 GiB/s
+     Compacted objects: 0                            0.0/s
+        Compacted data: 0.0 b   (0 Bytes)            0.0 b/s
+        Leaked objects: 0                            0.0/s
+           Leaked data: 0.0 b   (0 Bytes)            0.0 b/s
+       Skipped objects: 0                            0.0/s
+          Skipped data: 0.0 b   (0 Bytes)            0.0 b/s
 2023/06/09 10:15:49.819995 juicefs[280474] <INFO>: scanned 4741 objects, 4741 valid, 0 compacted (0 bytes), 0 leaked (0 bytes), 0 delslices (0 bytes), 0 delfiles (0 bytes), 0 skipped (0 bytes) [gc.go:379]
 ```
 

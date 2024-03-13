@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-python3 -c "import xattr" || sudo pip install xattr 
+python3 -c "import xattr" || sudo pip install xattr
 sudo dpkg -s redis-tools || sudo .github/scripts/apt_install.sh redis-tools
 
 source .github/scripts/common/common.sh
@@ -14,10 +14,10 @@ test_gc_trash_slices(){
     prepare_test
     ./juicefs format $META_URL myjfs
     ./juicefs mount -d $META_URL /jfs
-    PATH1=/tmp/test PATH2=/jfs/test python3 .github/scripts/random_read_write.py 
+    PATH1=/tmp/test PATH2=/jfs/test python3 .github/scripts/random_read_write.py
     ./juicefs status --more $META_URL
     ./juicefs config $META_URL --trash-days 0 --yes
-    ./juicefs gc $META_URL 
+    ./juicefs gc $META_URL
     ./juicefs gc $META_URL --delete
     ./juicefs status --more $META_URL
 }
@@ -30,7 +30,7 @@ test_gc_trash_files(){
     rm -rf /jfs/fsrand
     ./juicefs status --more $META_URL
     ./juicefs config $META_URL --trash-days 0 --yes
-    ./juicefs gc $META_URL 
+    ./juicefs gc $META_URL
     ./juicefs gc $META_URL --delete
     ./juicefs status --more $META_URL
 }

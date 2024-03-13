@@ -37,7 +37,7 @@ def flush_meta(meta_url):
         print(f'flush redis succeed')
     elif meta_url.startswith('mysql://'):
         create_mysql_db(meta_url)
-    elif meta_url.startswith('postgres://'): 
+    elif meta_url.startswith('postgres://'):
         create_postgres_db(meta_url)
     elif meta_url.startswith('tikv://'):
         run_cmd('echo "delall --yes" |tcli -pd localhost:2379')
@@ -51,7 +51,7 @@ def create_mysql_db(meta_url):
     db_name = meta_url[8:].split('@')[1].split('/')[1]
     user = meta_url[8:].split('@')[0].split(':')[0]
     password = meta_url[8:].split('@')[0].split(':')[1]
-    if password: 
+    if password:
         password = f'-p{password}'
     host_port= meta_url[8:].split('@')[1].split('/')[0].replace('(', '').replace(')', '')
     if ':' in host_port:
@@ -72,7 +72,7 @@ def create_postgres_db(meta_url):
 def clear_storage(storage, bucket, volume):
     print('start clear storage')
     if storage == 'file':
-        storage_dir = os.path.join(bucket, volume) 
+        storage_dir = os.path.join(bucket, volume)
         if os.path.exists(storage_dir):
             try:
                 shutil.rmtree(storage_dir)
@@ -124,7 +124,7 @@ def get_upload_delay_seconds(filesystem):
     with open(f'{filesystem}/.config') as f:
         config = json.load(f)
         return config['Chunk']['UploadDelay']/1000000000
-    
+
 def get_stage_blocks(filesystem):
     try:
         ps = subprocess.Popen(('cat', f'{filesystem}/.stats'), stdout=subprocess.PIPE)
@@ -206,7 +206,7 @@ def is_port_in_use(port: int) -> bool:
 
 def get_storage(juicefs, meta_url):
     output = subprocess.run([juicefs, 'status', meta_url], check=True, stdout=subprocess.PIPE).stdout.decode()
-    if 'get timestamp too slow' in output: 
+    if 'get timestamp too slow' in output:
         # remove the first line caust it is tikv log message
         output = '\n'.join(output.split('\n')[1:])
     print(f'status output: {output}')

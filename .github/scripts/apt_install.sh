@@ -38,7 +38,7 @@ function run_command() {
 }
 
 # Run apt-get update and check the return code
-run_command "apt-get update -y" 
+run_command "apt-get update -y"
 package_name=$@
 # Run apt-get install and check the return code
 run_command "apt-get install -y $package_name"

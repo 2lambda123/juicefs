@@ -1,8 +1,8 @@
-#!/bin/bash -e 
+#!/bin/bash -e
 source .github/scripts/start_meta_engine.sh
 [ -z "$TEST" ] && echo "TEST is not set" && exit 1
 
-# check port is ready until 60s, sleep 1s for each query 
+# check port is ready until 60s, sleep 1s for each query
 check_port(){
     port=$1
     echo "check for port:" $port
@@ -55,7 +55,7 @@ install_keydb(){
     sudo .github/scripts/apt_install.sh keydb
     keydb-server --storage-provider  flash /tmp/ --port 6378 --bind 127.0.0.1 --daemonize yes
     keydb-server --port 6377 --bind 127.0.0.1 --daemonize yes
-    check_port 6377 
+    check_port 6377
     check_port 6378
 }
 
@@ -127,5 +127,3 @@ prepare_db(){
 }
 
 prepare_db
-
-

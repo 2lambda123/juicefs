@@ -25,7 +25,7 @@ inputs:
     description: 'storage'
     required: true
     default: 'minio'
-  name: 
+  name:
     description: 'name'
     required: true
     default: 'sysbench'
