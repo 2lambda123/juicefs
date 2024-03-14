@@ -68,7 +68,7 @@ nonPartitionedTables.foreach { t => {
 println("Done generating non partitioned tables.")
 
 // leave the biggest/potentially hardest tables to be generated last.
-val partitionedTables = Array("inventory", "web_returns", "catalog_returns", "store_returns", "web_sales", "catalog_sales", "store_sales") 
+val partitionedTables = Array("inventory", "web_returns", "catalog_returns", "store_returns", "web_sales", "catalog_sales", "store_sales")
 partitionedTables.foreach { t => {
   tables.genData(
       location = rootDir,

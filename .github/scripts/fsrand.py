@@ -37,7 +37,7 @@ import os, random
 import platform
 import unicodedata
 from xmlrpc.client import boolean
-import xattr 
+import xattr
 class Devnull(object):
     def write(self, *args):
         pass
@@ -160,7 +160,7 @@ class FsRandomizer(object):
                     self.__stderr("%s, CREATE SYMLINK from %s to %s" % (str(i), src, dest))
                 try:
                     os.symlink(src, dest)
-                except: 
+                except:
                     print("".join([str(ord(c)) for c in src]))
                     print("".join([str(ord(c)) for c in dest]))
                     raise Exception("OS error: {0}".format(err))
@@ -207,7 +207,7 @@ class FsRandomizer(object):
                     os.system(f'setfattr -n {key} -v {value} {path}')
                 else:
                     xattr.setxattr(path, key, bytes(value, "utf-8"))
-    
+
                 value_set = xattr.getxattr(path, key)
                 assert( bytes(value, 'utf-8') == value_set)
 
@@ -234,7 +234,7 @@ class FsRandomizer(object):
                         os.chmod(path, self.__newmode(0o0600))
                     else:
                         os.chmod(path, self.__newmode(0o0700))
-            
+
 if "__main__" == __name__:
     import argparse, sys, time
     def info(s):

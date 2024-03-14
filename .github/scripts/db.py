@@ -31,7 +31,7 @@ def add_perf_record(name, result, product_version,  meta, storage, extra):
     passowrd = os.environ['MYSQL_PASSWORD']
     if not passowrd:
         print('<WARNING>: MYSQL_PASSWORD is empty')
-        return 
+        return
     github_ref_name = os.environ.get('GITHUB_REF_NAME')
     print(f'github_ref_name is: {github_ref_name}')
     github_run_id = os.environ.get('GITHUB_RUN_ID')
@@ -58,9 +58,7 @@ if __name__ == "__main__":
     args.add_argument("-m", "--meta", required=True, help="meta for juicefs")
     args.add_argument("-s", "--storage", required=True, help="storage for juicefs")
     args.add_argument("-e", "--extra", required=False, help="extra info")
-    
+
     args = vars(args.parse_args())
-    
+
     add_perf_record(args['name'], args['result'], args['version'], args['meta'], args.get('storage', ''), args.get('extra', ''))
-
-

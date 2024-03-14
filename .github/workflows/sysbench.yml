@@ -13,14 +13,14 @@ jobs:
         meta: [ 'sqlite3', 'redis', 'mysql', 'tikv', 'tidb', 'postgres', 'mariadb', 'badger', 'fdb']
         # meta: ['redis']
         compress: [ 'lz4']
-        include: 
+        include:
           - meta: 'redis'
             compress: 'zstd'
           - meta: 'redis'
             compress: 'none'
 
     runs-on: ubuntu-20.04
-  
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -38,11 +38,11 @@ jobs:
 
       - name: Build
         uses: ./.github/actions/build
-        with: 
+        with:
           target: ${{steps.vars.outputs.target}}
 
       - name: Prepare meta db
-        run: | 
+        run: |
           chmod +x .github/scripts/start_meta_engine.sh
           source .github/scripts/start_meta_engine.sh
           start_meta_engine ${{matrix.meta}}
@@ -159,4 +159,3 @@ jobs:
         with:
           channel-id: "${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}"
           slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"
-

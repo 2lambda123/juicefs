@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
-     
+
       - name: Build
         uses: ./.github/actions/build
 
@@ -289,7 +289,7 @@ jobs:
         shell: bash
         if: always()
         run: |
-          if [ -f /var/log/juicefs.log ]; then 
+          if [ -f /var/log/juicefs.log ]; then
             echo "juicefs log"
             sudo tail -n 1000 /var/log/juicefs.log
             grep "<FATAL>:" /var/log/juicefs.log && exit 1 || true
@@ -300,4 +300,4 @@ jobs:
         uses: juicedata/slack-notify-action@main
         with:
           channel-id: "${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}"
-          slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"  
+          slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"

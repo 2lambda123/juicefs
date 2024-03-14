@@ -22,8 +22,8 @@ def do_mutate_test(mutation_dir, index, total):
         end = len(list_of_files)
     for changed_file in list_of_files[start:end]:
         # timestamp_str = time.strftime(  '%m/%d/%Y :: %H:%M:%S',
-        #                             time.gmtime(os.path.getmtime(changed_file))) 
-        # print(timestamp_str, ' -->', changed_file) 
+        #                             time.gmtime(os.path.getmtime(changed_file)))
+        # print(timestamp_str, ' -->', changed_file)
         os.environ['MUTATE_CHANGED'] = changed_file
         ret = os.system('.github/scripts/mutate/mutest.sh') >> 8
         if ret == 0:
