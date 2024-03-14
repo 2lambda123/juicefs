@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // Databricks notebook source
-// MAGIC %md 
+// MAGIC %md
 // MAGIC This notebook runs spark-sql-perf TPCDS benchmark on and saves the result.
 
 // COMMAND ----------
