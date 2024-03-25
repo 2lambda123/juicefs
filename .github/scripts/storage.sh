@@ -30,7 +30,7 @@ test_with_fio(){
 test_random_read_write(){
     prepare_test
     ./juicefs mount $META_URL /jfs -d
-    PATH1=/tmp/test PATH2=/jfs/random_read_write python3 .github/scripts/random_read_write.py 
+    PATH1=/tmp/test PATH2=/jfs/random_read_write python3 .github/scripts/random_read_write.py
 }
 
 test_with_fsx(){
@@ -63,9 +63,8 @@ prepare_test(){
         gluster volume create gv0 $ip:/data/brick/gv0 force
         gluster volume start gv0
         gluster volume info
-        ./juicefs format $META_URL myjfs --storage gluster --bucket $ip/gv0 
+        ./juicefs format $META_URL myjfs --storage gluster --bucket $ip/gv0
     fi
 }
 
 source .github/scripts/common/run_test.sh && run_test $@
-

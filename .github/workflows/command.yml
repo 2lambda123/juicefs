@@ -71,13 +71,13 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Build 
+      - name: Build
         uses: ./.github/actions/build
 
       - name: Test Config
         run: |
           sudo META=${{matrix.meta}} .github/scripts/command/config.sh
-    
+
       - name: Test Clone
         timeout-minutes: 30
         run: |
@@ -86,13 +86,13 @@ jobs:
       - name: Test fsck
         timeout-minutes: 30
         run: |
-          sudo META=${{matrix.meta}} .github/scripts/command/fsck.sh 
-  
+          sudo META=${{matrix.meta}} .github/scripts/command/fsck.sh
+
       - name: Test Gc
         timeout-minutes: 30
         run: |
           sudo META=${{matrix.meta}} .github/scripts/command/gc.sh
-  
+
       - name: Test Load & Dump
         timeout-minutes: 30
         run: |
@@ -108,7 +108,7 @@ jobs:
           echo "juicefs log"
           sudo tail -n 1000 /var/log/juicefs.log
           grep "<FATAL>:" /var/log/juicefs.log && exit 1 || true
-          
+
       - name: Setup upterm session
         if: failure() && (github.event.inputs.debug == 'true' || github.run_attempt != 1)
         # if: failure()
@@ -128,13 +128,13 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Build 
+      - name: Build
         uses: ./.github/actions/build
 
       - name: Test Quota
         timeout-minutes: 30
         run: |
-          sudo META=${{matrix.meta}} .github/scripts/command/quota.sh 
+          sudo META=${{matrix.meta}} .github/scripts/command/quota.sh
 
       - name: Log
         if: always()
@@ -142,7 +142,7 @@ jobs:
           echo "juicefs log"
           sudo tail -n 1000 /var/log/juicefs.log
           grep "<FATAL>:" /var/log/juicefs.log && exit 1 || true
-          
+
       - name: Setup upterm session
         if: failure() && (github.event.inputs.debug == 'true' || github.run_attempt != 1)
         # if: failure()
@@ -162,7 +162,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Build 
+      - name: Build
         uses: ./.github/actions/build
         # with:
         #   useBeta: true
@@ -170,12 +170,12 @@ jobs:
       - name: Test Sync
         timeout-minutes: 30
         run: |
-          sudo META=${{matrix.meta}} .github/scripts/command/sync.sh 
+          sudo META=${{matrix.meta}} .github/scripts/command/sync.sh
 
       - name: Test Sync with mino
         timeout-minutes: 30
         run: |
-          sudo META=${{matrix.meta}} .github/scripts/command/sync_minio.sh 
+          sudo META=${{matrix.meta}} .github/scripts/command/sync_minio.sh
 
       - name: Test Sync with multi nodes
         timeout-minutes: 30
@@ -187,7 +187,7 @@ jobs:
           # not supported algo: "dsa" "ecdsa-sk" "ed25519-sk"
           types=("ecdsa"  "ed25519"  "rsa")
           random_type=${types[$RANDOM % ${#types[@]}]}
-          sudo CI=true META=${{matrix.meta}} KEY_TYPE=$random_type .github/scripts/command/sync_cluster.sh 
+          sudo CI=true META=${{matrix.meta}} KEY_TYPE=$random_type .github/scripts/command/sync_cluster.sh
 
       - name: Log
         if: always()
@@ -195,13 +195,13 @@ jobs:
           echo "juicefs log"
           sudo tail -n 1000 /var/log/juicefs.log
           grep "<FATAL>:" /var/log/juicefs.log && exit 1 || true
-          
+
       - name: Setup upterm session
         if: failure() && (github.event.inputs.debug == 'true' || github.run_attempt != 1)
         # if: failure()
         timeout-minutes: 60
         uses: lhotari/action-upterm@v1
-      
+
 
   success-all-test:
     runs-on: ubuntu-latest

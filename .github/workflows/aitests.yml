@@ -31,7 +31,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Build 
+      - name: Build
         uses: ./.github/actions/build
 
       - name: Run Redis
@@ -65,7 +65,7 @@ jobs:
           else
             echo "matrix.type error: ${{matrix.type}} "
           fi
-          
+
           python --version
 
       - name: Set up Conda
@@ -127,7 +127,7 @@ jobs:
 
       - name: log
         if: always()
-        run: | 
+        run: |
           tail -300 /var/log/juicefs.log
           grep "<FATAL>:" /var/log/juicefs.log && exit 1 || true
 
@@ -137,4 +137,3 @@ jobs:
         with:
           channel-id: "${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}"
           slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"
-

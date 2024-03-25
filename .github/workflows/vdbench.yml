@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
-  
+
 jobs:
   vdbench:
     strategy:
@@ -13,7 +13,7 @@ jobs:
         meta: [ 'sqlite3', 'redis', 'mysql', 'tikv', 'tidb', 'postgres', 'mariadb', 'fdb']
     runs-on: ubuntu-20.04
 
-    steps:        
+    steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -30,11 +30,11 @@ jobs:
 
       - name: Build
         uses: ./.github/actions/build
-        with: 
-          target: ${{steps.vars.outputs.target}}    
+        with:
+          target: ${{steps.vars.outputs.target}}
 
       - name: Prepare meta db
-        run: | 
+        run: |
           chmod +x .github/scripts/start_meta_engine.sh
           source .github/scripts/start_meta_engine.sh
           start_meta_engine ${{matrix.meta}}
@@ -45,10 +45,10 @@ jobs:
         shell: bash
         run: |
           wget -q https://dl.minio.io/client/mc/release/linux-amd64/mc
-          chmod +x mc 
+          chmod +x mc
           wget -q https://s.juicefs.com/static/bench/vdbench50407.zip
           unzip vdbench50407.zip -d vdbench
-          
+
       - name: Start minio
         run: |
           docker run -d -p 19000:9000 --name minio \
@@ -58,12 +58,12 @@ jobs:
                       -v /tmp/config:/root/.minio \
                       minio/minio server /data
           sleep 5
-      - name: vdbench-big 
+      - name: vdbench-big
         shell: bash
-        run: | 
+        run: |
           source .github/scripts/start_meta_engine.sh
           meta_url=$(get_meta_url ${{matrix.meta}})
-          ./juicefs format $meta_url vdbench-big --storage minio --bucket http://127.0.0.1:19000/mypics --access-key minioadmin --secret-key minioadmin 
+          ./juicefs format $meta_url vdbench-big --storage minio --bucket http://127.0.0.1:19000/mypics --access-key minioadmin --secret-key minioadmin
           ./juicefs mount -d $meta_url /tmp/vdbench --no-usage-report
           vdbench/vdbench -f .github/workflows/resources/vdbench_big_file.conf
 
@@ -89,7 +89,7 @@ jobs:
         run: |
           source .github/scripts/start_meta_engine.sh
           meta_url=$(get_meta_url ${{matrix.meta}})
-          ./juicefs format $meta_url vdbench-small --storage minio --bucket http://127.0.0.1:19000/mypics --access-key minioadmin --secret-key minioadmin 
+          ./juicefs format $meta_url vdbench-small --storage minio --bucket http://127.0.0.1:19000/mypics --access-key minioadmin --secret-key minioadmin
           ./juicefs mount -d $meta_url /tmp/vdbench --no-usage-report
           vdbench/vdbench -f .github/workflows/resources/vdbench_small_file.conf
 
@@ -101,14 +101,13 @@ jobs:
       - name: log
         if: always()
         shell: bash
-        run: | 
+        run: |
           tail -300 ~/.juicefs/juicefs.log
           grep "<FATAL>:" ~/.juicefs/juicefs.log && exit 1 || true
-          
+
       - name: Send Slack Notification
         if: failure()
         uses: juicedata/slack-notify-action@main
         with:
           channel-id: "${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}"
-          slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"          
-
+          slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"

@@ -34,7 +34,7 @@ install_tikv(){
         echo "Unknown user $user"
         exit 1
     fi
-    
+
     $tiup playground --mode tikv-slim > tikv.log 2>&1  &
     pid=$!
     timeout=60
@@ -67,7 +67,7 @@ install_tidb(){
         echo "Unknown user $user"
         exit 1
     fi
-    
+
     $tiup playground 5.4.0 > tidb.log 2>&1  &
     pid=$!
     timeout=60
@@ -128,7 +128,7 @@ start_meta_engine(){
             -d postgres
         sleep 10
     fi
-    
+
     if [ "$storage" == "minio" ]; then
         if ! docker ps | grep "minio/minio"; then
             docker run -d -p 9000:9000 --name minio \

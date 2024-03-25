@@ -4,8 +4,8 @@ run_one_test()
     test=$1
     test=${test%%(*}
     echo -e "\033[0;34mStart Test: $test\033[0m"
-    START_TIME=$(date +%s)    
-    set +e 
+    START_TIME=$(date +%s)
+    set +e
     ( set -e; "${test}" )
     EXIT_STATUS=$?
     set -e
@@ -21,7 +21,7 @@ run_one_test()
 }
 
 run_test(){
-    START_TIME_ALL=$(date +%s) 
+    START_TIME_ALL=$(date +%s)
     if [[ ! -z "$@" ]]; then
         # run test functions passed by arguments
         for test in "$@"; do

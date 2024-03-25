@@ -42,11 +42,11 @@ func cmdSummary() *cli.Command {
 		ArgsUsage: "PATH",
 		Description: `
  It is used to show tree summary of target directory.
- 
+
  Examples:
  # Show with path
  $ juicefs summary /mnt/jfs/foo
- 
+
  # Show max depth of 5
  $ juicefs summary --depth 5 /mnt/jfs/foo
 

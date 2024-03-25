@@ -7,7 +7,7 @@ services:
     networks:
       static-network:
         ipv4_address: 172.20.0.2
-    
+
   worker2:
     image: juicedata/ssh
     container_name: worker2
@@ -15,7 +15,7 @@ services:
     networks:
       static-network:
         ipv4_address: 172.20.0.3
-  
+
 networks:
   static-network:
     ipam:

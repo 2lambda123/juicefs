@@ -5,7 +5,7 @@ Mutation testing (or Mutation analysis or Program mutation) is used to design ne
 there are several kind of mutants:
 1. killed mutants: the mutants which is killed by the unit test. which is identified by "tests passed -> FAIL" in the log
 2. failed or escaped mutants: the mutants which pass the unit test. which is identified by "tests failed -> PASS" in the log
-3. skipped mutants: the mutants may skipped because of 1. out of coverage code. 2. in the black list, 3. skipped by comment. 
+3. skipped mutants: the mutants may skipped because of 1. out of coverage code. 2. in the black list, 3. skipped by comment.
 4. other exception cases.
 # how to checkout the failed mutants?
 1. open the github action workflow page.
