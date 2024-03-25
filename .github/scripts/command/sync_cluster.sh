@@ -58,7 +58,7 @@ test_sync_without_mount_point(){
     done
     dd if=/dev/urandom of=/jfs/data/file$file_count bs=1M count=1024
     (./mc rb myminio/data1 > /dev/null 2>&1 --force || true) && ./mc mb myminio/data1
-    
+
     sudo -u juicedata meta_url=$META_URL ./juicefs sync -v jfs://meta_url/data/ minio://minioadmin:minioadmin@172.20.0.1:9000/data1/ \
          --manager-addr 172.20.0.1:8081 --worker juicedata@172.20.0.2,juicedata@172.20.0.3 \
          --list-threads 10 --list-depth 5 \
@@ -79,7 +79,7 @@ test_sync_without_mount_point2(){
     dd if=/dev/urandom of=data/file$file_count bs=1M count=1024
     (./mc rb myminio/data > /dev/null 2>&1 --force || true) && ./mc mb myminio/data
     ./mc cp -r data myminio/data
-    
+
     # (./mc rb myminio/data1 > /dev/null 2>&1 --force || true) && ./mc mb myminio/data1
     sudo -u juicedata meta_url=$META_URL ./juicefs sync -v  minio://minioadmin:minioadmin@172.20.0.1:9000/data/ jfs://meta_url/ \
          --manager-addr 172.20.0.1:8081 --worker juicedata@172.20.0.2,juicedata@172.20.0.3 \

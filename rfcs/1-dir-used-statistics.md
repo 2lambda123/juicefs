@@ -22,7 +22,7 @@ Redis engine stores the counters in hashes.
 func (m *redisMeta) dirUsedSpaceKey() string {
     return m.prefix + "dirUsedSpace"
 }
- 
+
 func (m *redisMeta) dirUsedInodesKey() string {
     return m.prefix + "dirUsedInodes"
 }
@@ -136,5 +136,3 @@ func (m *baseMeta) getDirUsage(ctx Context, root Ino) (space, inodes uint64, err
     return
 }
 ```
-
-

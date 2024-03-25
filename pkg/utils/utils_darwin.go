@@ -37,10 +37,10 @@ func GetSysInfo() string {
 	hardware, _ = exec.Command("system_profiler", "SPMemoryDataType", "SPStorageDataType").Output()
 
 	return fmt.Sprintf(`
-Kernel: 
+Kernel:
 %s
-OS: 
+OS:
 %s
-Hardware: 
+Hardware:
 %s`, kernel, string(osVersion), string(hardware))
 }
