@@ -44,7 +44,7 @@ def read_all(path1, path2):
     with open(path1, 'rb') as f1, open(path2, 'rb') as f2:
         assert f1.read() == f2.read()
         print("Read all bytes")
-    
+
 if __name__ == '__main__':
     path1 = os.environ.get('PATH1', '/tmp/test1')
     path2 = os.environ.get('PATH2', '/tmp/test2')

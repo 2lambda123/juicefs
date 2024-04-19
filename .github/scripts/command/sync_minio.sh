@@ -27,7 +27,7 @@ test_sync_big_file(){
 test_sync_with_limit(){
     prepare_test
     ./juicefs mdtest $META_URL /test --dirs 10 --depth 2 --files 5 --threads 10
-    ./juicefs sync --limit 1000 minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ 
+    ./juicefs sync --limit 1000 minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/
     count=$(./mc ls myminio/myjfs -r | wc -l)
     echo count is $count
     [ $count -eq 1000 ]
@@ -35,7 +35,7 @@ test_sync_with_limit(){
 test_sync_with_existing(){
     prepare_test
     echo abc > /jfs/abc
-    ./juicefs sync --existing minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ 
+    ./juicefs sync --existing minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/
     ./mc find myminio/myjfs/abc && echo "myminio/myjfs/abc should not exist" && exit 1 || true
     ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/
     ./mc find myminio/myjfs/abc
@@ -46,17 +46,17 @@ test_sync_with_update(){
     ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/
     echo def > def
     ./mc cp def myminio/myjfs/abc
-    ./juicefs sync --update minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ 
+    ./juicefs sync --update minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/
     ./mc cat myminio/myjfs/abc | grep def || (echo "content should be def" && exit 1)
-    ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ 
+    ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/
     ./mc cat myminio/myjfs/abc | grep def || (echo "content should be def" && exit 1)
     ./juicefs sync --force-update minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/
     ./mc cat myminio/myjfs/abc | grep abc || (echo "content should be abc" && exit 1)
     echo hijk > hijk
     ./mc cp hijk myminio/myjfs/abc
-    ./juicefs sync --update minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ 
+    ./juicefs sync --update minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/
     ./mc cat myminio/myjfs/abc | grep hijk || (echo "content should be hijk" && exit 1)
-    ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ 
+    ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/
     ./mc cat myminio/myjfs/abc | grep abc || (echo "content should be abc" && exit 1)
 }
 
@@ -64,7 +64,7 @@ test_sync_hard_link(){
     prepare_test
     echo abc > /jfs/abc
     ln /jfs/abc /jfs/def
-    ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/ 
+    ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/
     ./mc cat myminio/myjfs/def | grep abc || (echo "content should be abc" && exit 1)
     echo abcd > /jfs/abc
     ./juicefs sync minio://minioadmin:minioadmin@localhost:9005/myjfs/ minio://minioadmin:minioadmin@localhost:9000/myjfs/

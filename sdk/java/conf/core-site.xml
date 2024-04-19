@@ -20,7 +20,7 @@
 	<property>
 		<name>juicefs.access-log</name>
 		<value>/tmp/juicefs-access.log</value>
-	</property>	
+	</property>
 	<property>
 		<name>juicefs.dev.meta</name>
 		<value>127.0.0.1</value>

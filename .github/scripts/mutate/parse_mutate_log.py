@@ -31,4 +31,4 @@ if __name__ == '__main__':
         print(s)
     else:
         exit(1)
-    
+

@@ -40,4 +40,3 @@ test_config_max_client_version()
 
 
 source .github/scripts/common/run_test.sh && run_test $@
-

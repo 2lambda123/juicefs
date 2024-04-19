@@ -16,8 +16,8 @@ import argparse
 #   `job_name` varchar(64) DEFAULT NULL,
 #   `passed` int,
 #   `failed` int,
-#   `compile_error` int, 
-#   `out_of_coverage` int, 
+#   `compile_error` int,
+#   `out_of_coverage` int,
 #   `skip_by_comment` int,
 #   `others` int
 # )
@@ -51,4 +51,3 @@ if __name__ == "__main__":
     with open(stat_result_file) as f:
         report = json.load(f)
         save_report(job_name, report)
-

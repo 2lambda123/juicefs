@@ -1346,7 +1346,7 @@ tools:
     cve_url: https://github.com/advisories/GHSA-w73w-5m7g-f7qc
     detected_date: Aug 22
     severity: high
-    first_patched: 
+    first_patched:
 - name: logrus
   description: Structured, pluggable logging for Go
   package_url: https://pkg.go.dev/github.com/sirupsen/logrus
