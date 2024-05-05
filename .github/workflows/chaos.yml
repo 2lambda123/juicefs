@@ -15,7 +15,7 @@ on:
         required: false
         default: false
   schedule:
-    - cron:  '0 0 * * *'        
+    - cron:  '0 0 * * *'
 
 jobs:
   chaos-test:
@@ -26,7 +26,7 @@ jobs:
         # chaos: ["minio-io", "minio-memory", "minio-cpu", "minio-bandwidth", "redis-bandwidth", "redis-io", "redis-delay", "redis-memory", "redis-cpu", "juicefs-bandwidth", "juicefs-memory", "juicefs-cpu", "juicefs-delay"]
         chaos: ["minio-io", "minio-memory", "minio-cpu", "minio-bandwidth",  "redis-io", "redis-delay", "redis-memory", "redis-cpu", "juicefs-bandwidth", "juicefs-memory", "juicefs-cpu", "juicefs-delay"]
         # chaos: ["minio-io"]
-    steps:        
+    steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -37,8 +37,8 @@ jobs:
           go-version: 'oldstable'
           cache: true
 
-      - name: Build 
-        run: | 
+      - name: Build
+        run: |
           sudo .github/scripts/apt_install.sh musl-tools upx-ucl
           export STATIC=1
           make juicefs
@@ -88,8 +88,8 @@ jobs:
         run: |
           kubectl apply -f .github/scripts/chaos/minio.yaml
 
-      - name: Mount Juicefs 
-        run: | 
+      - name: Mount Juicefs
+        run: |
           kubectl apply -f .github/scripts/chaos/sc.yaml
           kubectl apply -f .github/scripts/chaos/pvc.yaml
 
@@ -122,15 +122,15 @@ jobs:
           done
 
       - name: Run chaos mesh action
-        run: | 
-          chaos=${{matrix.chaos}}
-          sed -i "s/# - $chaos/- $chaos/g" .github/scripts/chaos/workflow.yaml 
-          cat .github/scripts/chaos/workflow.yaml 
-          kubectl apply -f .github/scripts/chaos/workflow.yaml 
-
-      - name: Verify 
         run: |
-          for i in {1..1200}; do 
+          chaos=${{matrix.chaos}}
+          sed -i "s/# - $chaos/- $chaos/g" .github/scripts/chaos/workflow.yaml
+          cat .github/scripts/chaos/workflow.yaml
+          kubectl apply -f .github/scripts/chaos/workflow.yaml
+
+      - name: Verify
+        run: |
+          for i in {1..1200}; do
             if kubectl get pods --all-namespaces | grep dynamic-ce | grep -i "Completed"; then
               echo "dynamic-ce is completed in $i seconds"
               break
@@ -171,7 +171,7 @@ jobs:
 
       - name: Check mount point pod
         if: always()
-        run: | 
+        run: |
           POD_NAME=$(kubectl get pods -n kube-system -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'  | grep juicefs-chart-testing-control-plane-pvc)
           echo POD_NAME is $POD_NAME
           kubectl -n kube-system describe po $POD_NAME
@@ -181,7 +181,7 @@ jobs:
 
       - name: Check vdbench log
         if: always()
-        run: | 
+        run: |
           POD_NAME=$(kubectl get pods -n default -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'  | grep dynamic-ce )
           echo POD_NAME is $POD_NAME
           kubectl -n default describe po $POD_NAME
@@ -191,7 +191,7 @@ jobs:
 
       - name: Check Redis log
         if: always()
-        run: | 
+        run: |
           POD_NAME=$(kubectl get pods -n kube-system -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'  | grep redis )
           echo POD_NAME is $POD_NAME
           kubectl -n kube-system describe po $POD_NAME
@@ -201,7 +201,7 @@ jobs:
 
       - name: Check Minio log
         if: always()
-        run: | 
+        run: |
           POD_NAME=$(kubectl get pods -n kube-system -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}'  | grep minio )
           echo POD_NAME is $POD_NAME
           kubectl -n kube-system describe po $POD_NAME
@@ -228,12 +228,12 @@ jobs:
         run: exit 1
 
       - name: Send Slack Notification
-        if: failure() && github.event_name != 'workflow_dispatch' 
+        if: failure() && github.event_name != 'workflow_dispatch'
         uses: juicedata/slack-notify-action@main
         with:
           channel-id: "${{ secrets.SLACK_CHANNEL_ID_FOR_PR_CHECK_NOTIFY }}"
           slack_bot_token: "${{ secrets.SLACK_BOT_TOKEN }}"
 
       - name: Success
-        if: success() 
+        if: success()
         run: echo "All Done"

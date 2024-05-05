@@ -2,14 +2,14 @@ name: "misc-test"
 
 on:
   push:
-    branches: 
+    branches:
       - release-**
     paths-ignore:
       - 'docs/**'
       - '**.md'
   pull_request:
     #The branches below must be a subset of the branches above
-    branches: 
+    branches:
       - release-**
       # - main
     paths-ignore:
@@ -47,35 +47,35 @@ jobs:
                     -e "MINIO_SECRET_KEY=minioadmin" \
                     -v /tmp/data:/data \
                     -v /tmp/config:/root/.minio \
-                    minio/minio server /data     
+                    minio/minio server /data
 
-      - name: Build 
+      - name: Build
         uses: ./.github/actions/build
 
       - name: Install tool
-        run: | 
+        run: |
           wget -q https://dl.minio.io/client/mc/release/linux-amd64/mc
-          chmod +x mc 
+          chmod +x mc
           sudo .github/scripts/apt_install.sh redis-tools fio
 
       - name: Test mount process exit on reformat
         run: |
-          for i in {1..3}; do 
+          for i in {1..3}; do
             echo "round $i"
             meta=redis://localhost/1
             ./juicefs format $meta volume-$i
             ./juicefs mount -d $meta /tmp/myjfs$i_$j --no-usage-report
             cd /tmp/myjfs$i_$j
-            bash -c 'for k in {1..300}; do echo abc>$k; sleep 0.2; done' || true & 
+            bash -c 'for k in {1..300}; do echo abc>$k; sleep 0.2; done' || true &
             cd -
             sleep 3
-            uuid=$(./juicefs status $meta | grep UUID | cut -d '"' -f 4) 
+            uuid=$(./juicefs status $meta | grep UUID | cut -d '"' -f 4)
             ./juicefs destroy --force $meta $uuid
-            ./juicefs format $meta new-volume-$i 
-            sleep 15   
+            ./juicefs format $meta new-volume-$i
+            sleep 15
             ps -ef | grep juicefs
             pidof juicefs && exit 1
-            uuid=$(./juicefs status $meta | grep UUID | cut -d '"' -f 4) 
+            uuid=$(./juicefs status $meta | grep UUID | cut -d '"' -f 4)
             ./juicefs destroy --force $meta $uuid
           done
 
@@ -99,7 +99,7 @@ jobs:
           sleep 6
           echo abc | tee $mount_point/abc.txt && echo "write success"
           cat $mount_point/abc.txt | grep abc && echo "read success"
-          
+
       - name: Test delay delete slice after compaction
         run: |
           meta=redis://localhost/3
@@ -121,7 +121,7 @@ jobs:
 
       - name: log
         if: always()
-        run: | 
+        run: |
           tail -300 ~/.juicefs/juicefs.log
           grep -v "UUID changed"  ~/.juicefs/juicefs.log | grep "<FATAL>:"  && exit 1 || true
 

@@ -12,7 +12,7 @@ def parse_test_jobs(test_file_path):
             g = re.search('^//mutate_test_job_number:\s*(.+)', line.strip())
             if g:
                 return int(g.group(1))
-                
+
     return 0
 
 if __name__ == '__main__':
@@ -21,4 +21,4 @@ if __name__ == '__main__':
         print('test file name is empty', file=sys.stderr)
         exit(1)
     print(parse_test_jobs(test_file_path))
-    
+
