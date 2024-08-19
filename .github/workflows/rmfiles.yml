@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
-      
+
       - name: Set Variable
         id: vars
         run: |
@@ -37,11 +37,11 @@ jobs:
 
       - name: Build
         uses: ./.github/actions/build
-        with: 
+        with:
           target: ${{steps.vars.outputs.target}}
 
       - name: Prepare meta db
-        run: | 
+        run: |
           sudo chmod +x .github/scripts/start_meta_engine.sh
           source .github/scripts/start_meta_engine.sh
           start_meta_engine ${{matrix.meta}}
@@ -62,11 +62,11 @@ jobs:
           sleep 3
           ls -l $mp/test
           ./juicefs rmr $mp/test/
-          sleep 3 
+          sleep 3
           ls -l $mp/test && exit 1 || true
-        
+
       - name: Clear
-        run: | 
+        run: |
           source .github/scripts/start_meta_engine.sh
           meta_url=$(get_meta_url ${{matrix.meta}})
           mp=/tmp/jfs
@@ -106,10 +106,10 @@ jobs:
       - name: log
         if: always()
         shell: bash
-        run: | 
+        run: |
           tail -300 ~/.juicefs/juicefs.log
           grep "<FATAL>:" ~/.juicefs/juicefs.log && exit 1 || true
-          
+
       - name: Setup upterm session
         if: failure() && (github.event.inputs.debug == 'true' || github.run_attempt != 1)
         timeout-minutes: 60

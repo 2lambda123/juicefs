@@ -33,11 +33,11 @@ import random
 
 @seed(random.randint(10000, 1000000))
 @hypothesis.settings(
-    verbosity=Verbosity.debug, 
-    max_examples=100, 
-    stateful_step_count=30, 
-    deadline=None, 
-    report_multiple_bugs=False, 
+    verbosity=Verbosity.debug,
+    max_examples=100,
+    stateful_step_count=30,
+    deadline=None,
+    report_multiple_bugs=False,
     phases=[Phase.explicit, Phase.reuse, Phase.generate, Phase.target, Phase.shrink, Phase.explain])
 class JuicefsMachine(RuleBasedStateMachine):
     MIN_CLIENT_VERSIONS = ['0.0.1', '0.0.17','1.0.0-beta1', '1.0.0-rc1']
@@ -76,17 +76,17 @@ class JuicefsMachine(RuleBasedStateMachine):
 
     @rule(
           juicefs=st.sampled_from(JFS_BINS),
-          block_size=st.integers(min_value=1, max_value=4096*10), 
+          block_size=st.integers(min_value=1, max_value=4096*10),
           capacity=st.integers(min_value=0, max_value=1024),
           inodes=st.integers(min_value=1024*1024, max_value=1024*1024*1024),
           compress=st.sampled_from(['lz4', 'zstd', 'none']),
           shards=st.integers(min_value=0, max_value=1),
-          storage=st.just(STORAGE), 
-          encrypt_rsa_key = st.booleans(), 
+          storage=st.just(STORAGE),
+          encrypt_rsa_key = st.booleans(),
           encrypt_algo = st.sampled_from(['aes256gcm-rsa','chacha20-rsa']),
-          trash_days=st.integers(min_value=0, max_value=10000), 
-          hash_prefix=st.booleans(), 
-          force = st.booleans(), 
+          trash_days=st.integers(min_value=0, max_value=10000),
+          hash_prefix=st.booleans(),
+          force = st.booleans(),
           no_update = st.booleans()
           )
     def format(self, juicefs, block_size, capacity, inodes, compress, shards, storage, encrypt_rsa_key, encrypt_algo, trash_days, hash_prefix, force, no_update):
@@ -104,7 +104,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         options.extend(['--inodes', str(inodes)])
         if run_cmd(f'{juicefs} format --help | grep trash-days') == 0:
             options.extend(['--trash-days', str(trash_days)])
-        
+
         if force:
             options.append('--force')
         if no_update:
@@ -116,7 +116,7 @@ class JuicefsMachine(RuleBasedStateMachine):
             options.extend(['--encrypt-rsa-key', 'my-priv-key.pem'])
             if run_cmd(f'{juicefs} format --help | grep encrypt-algo') == 0:
                 options.extend(['--encrypt-algo', encrypt_algo])
-        
+
         if storage == 'minio':
             bucket = 'http://localhost:9000/testbucket'
             options.extend(['--bucket', bucket])
@@ -157,14 +157,14 @@ class JuicefsMachine(RuleBasedStateMachine):
 
     @rule(
         juicefs=st.sampled_from(JFS_BINS),
-        capacity=st.integers(min_value=0, max_value=1024), 
+        capacity=st.integers(min_value=0, max_value=1024),
         inodes=st.integers(min_value=1024*1024, max_value=1024*1024*1024),
-        change_bucket=st.booleans(), 
-        change_aksk=st.booleans(), 
-        encrypt_secret = st.booleans(), 
+        change_bucket=st.booleans(),
+        change_aksk=st.booleans(),
+        encrypt_secret = st.booleans(),
         trash_days =  st.integers(min_value=0, max_value=10000),
-        min_client_version = st.sampled_from(MIN_CLIENT_VERSIONS), 
-        max_client_version = st.sampled_from(MAX_CLIENT_VERSIONS), 
+        min_client_version = st.sampled_from(MIN_CLIENT_VERSIONS),
+        max_client_version = st.sampled_from(MAX_CLIENT_VERSIONS),
         force = st.booleans(),
     )
     @precondition(lambda self: self.formatted)
@@ -182,11 +182,11 @@ class JuicefsMachine(RuleBasedStateMachine):
         if run_cmd(f'{juicefs} config --help | grep max-client-version') == 0:
             options.extend(['--max-client-version', max_client_version])
         storage = get_storage(juicefs, JuicefsMachine.META_URL)
-        
+
         if change_bucket:
             if storage == 'file':
                 options.extend(['--bucket', os.path.expanduser('~/.juicefs/local2')])
-            elif storage == 'minio': 
+            elif storage == 'minio':
                 c = Minio('localhost:9000', access_key='minioadmin', secret_key='minioadmin', secure=False)
                 if not c.bucket_exists('testbucket2'):
                     run_cmd('mc mb myminio/testbucket2')
@@ -234,7 +234,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         assume (self.greater_than_version_formatted(juicefs))
         print('start status')
         output = subprocess.run([juicefs, 'status', JuicefsMachine.META_URL], check=True, stdout=subprocess.PIPE).stdout.decode()
-        if 'get timestamp too slow' in output: 
+        if 'get timestamp too slow' in output:
             # remove the first line caust it is tikv log message
             output = '\n'.join(output.split('\n')[1:])
         print(f'status output: {output}')
@@ -245,44 +245,44 @@ class JuicefsMachine(RuleBasedStateMachine):
         assert len(uuid) != 0
         if self.mounted and not is_readonly(JuicefsMachine.MOUNT_POINT) and self.greater_than_version_mounted(juicefs):
             sessions = json.loads(output.replace("'", '"'))['Sessions']
-            assert len(sessions) != 0 
+            assert len(sessions) != 0
         print('status succeed')
 
 
-    @rule(juicefs=st.sampled_from(JFS_BINS), 
+    @rule(juicefs=st.sampled_from(JFS_BINS),
         no_syslog=st.booleans(),
-        other_fuse_options=st.lists(st.sampled_from(['debug', 'allow_other', 'writeback_cache']), unique=True), 
+        other_fuse_options=st.lists(st.sampled_from(['debug', 'allow_other', 'writeback_cache']), unique=True),
         enable_xattr=st.booleans(),
-        attr_cache=st.integers(min_value=1, max_value=10), 
-        entry_cache=st.integers(min_value=1, max_value=10), 
-        dir_entry_cache=st.integers(min_value=1, max_value=10), 
-        get_timeout=st.integers(min_value=30, max_value=60), 
-        put_timeout=st.integers(min_value=30, max_value=60), 
-        io_retries=st.integers(min_value=5, max_value=15), 
-        max_uploads=st.integers(min_value=5, max_value=100), 
-        max_deletes=st.integers(min_value=5, max_value=100), 
-        buffer_size=st.integers(min_value=100, max_value=1000), 
-        upload_limit=st.integers(min_value=100, max_value=1000), 
-        download_limit=st.integers(min_value=100, max_value=1000), 
-        prefetch=st.integers(min_value=0, max_value=100), 
+        attr_cache=st.integers(min_value=1, max_value=10),
+        entry_cache=st.integers(min_value=1, max_value=10),
+        dir_entry_cache=st.integers(min_value=1, max_value=10),
+        get_timeout=st.integers(min_value=30, max_value=60),
+        put_timeout=st.integers(min_value=30, max_value=60),
+        io_retries=st.integers(min_value=5, max_value=15),
+        max_uploads=st.integers(min_value=5, max_value=100),
+        max_deletes=st.integers(min_value=5, max_value=100),
+        buffer_size=st.integers(min_value=100, max_value=1000),
+        upload_limit=st.integers(min_value=100, max_value=1000),
+        download_limit=st.integers(min_value=100, max_value=1000),
+        prefetch=st.integers(min_value=0, max_value=100),
         writeback=st.just(False),
-        upload_delay=st.sampled_from([0, 2]), 
+        upload_delay=st.sampled_from([0, 2]),
         cache_dir=st.sampled_from(['cache1', 'cache2']),
-        cache_size=st.integers(min_value=0, max_value=1024000), 
-        free_space_ratio=st.floats(min_value=0.1, max_value=0.5), 
+        cache_size=st.integers(min_value=0, max_value=1024000),
+        free_space_ratio=st.floats(min_value=0.1, max_value=0.5),
         cache_partial_only=st.booleans(),
         backup_meta=st.integers(min_value=300, max_value=1000),
-        heartbeat=st.integers(min_value=5, max_value=12), 
+        heartbeat=st.integers(min_value=5, max_value=12),
         read_only=st.booleans(),
         no_bgjob=st.booleans(),
         open_cache=st.integers(min_value=0, max_value=100),
         sub_dir=st.sampled_from(['dir1', 'dir2']),
-        metrics=st.sampled_from(['127.0.0.1:9567', '127.0.0.1:9568']), 
-        consul=st.sampled_from(['127.0.0.1:8500', '127.0.0.1:8501']), 
+        metrics=st.sampled_from(['127.0.0.1:9567', '127.0.0.1:9568']),
+        consul=st.sampled_from(['127.0.0.1:8500', '127.0.0.1:8501']),
     )
     @precondition(lambda self: self.formatted  )
     def mount(self, juicefs, no_syslog, other_fuse_options, enable_xattr, attr_cache, entry_cache, dir_entry_cache,
-        get_timeout, put_timeout, io_retries, max_uploads, max_deletes, buffer_size, upload_limit, download_limit, prefetch, 
+        get_timeout, put_timeout, io_retries, max_uploads, max_deletes, buffer_size, upload_limit, download_limit, prefetch,
         writeback, upload_delay, cache_dir, cache_size, free_space_ratio, cache_partial_only, backup_meta, heartbeat, read_only,
         no_bgjob, open_cache, sub_dir, metrics, consul):
         assume (self.greater_than_version_formatted(juicefs))
@@ -291,7 +291,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         retry = 3
         while os.path.exists(f'{JuicefsMachine.MOUNT_POINT}/.accesslog') and retry > 0:
             os.system(f'umount {JuicefsMachine.MOUNT_POINT}')
-            retry = retry - 1 
+            retry = retry - 1
             time.sleep(1)
         if os.path.exists(f'{JuicefsMachine.MOUNT_POINT}/.accesslog'):
             print(f'FATAL: umount {JuicefsMachine.MOUNT_POINT} failed.')
@@ -365,20 +365,20 @@ class JuicefsMachine(RuleBasedStateMachine):
         print(f'inode number: {inode}')
         assert(inode.decode()[:-1] == '1')
         output = subprocess.run([juicefs, 'status', JuicefsMachine.META_URL], check=True, stdout=subprocess.PIPE).stdout.decode()
-        if 'get timestamp too slow' in output: 
+        if 'get timestamp too slow' in output:
             # remove the first line caust it is tikv log message
             output = '\n'.join(output.split('\n')[1:])
         print(f'status output: {output}')
         sessions = json.loads(output.replace("'", '"'))['Sessions']
-        if not read_only: 
-            assert len(sessions) != 0 
+        if not read_only:
+            assert len(sessions) != 0
         self.mounted = True
         if not read_only:
             self.mounted_by.append(juicefs)
         print('mount succeed')
 
-    @rule(juicefs=st.sampled_from(JFS_BINS), 
-        file_name=st.just('file_to_info'), 
+    @rule(juicefs=st.sampled_from(JFS_BINS),
+        file_name=st.just('file_to_info'),
         data = st.binary())
     @precondition(lambda self: self.formatted and self.mounted )
     def info(self, juicefs, file_name, data):
@@ -393,7 +393,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         run_jfs_cmd(options)
         print('info succeed')
 
-    @rule(juicefs=st.sampled_from(JFS_BINS), 
+    @rule(juicefs=st.sampled_from(JFS_BINS),
     file_name=st.just('file_to_rmr'))
     @precondition(lambda self: self.formatted and self.mounted )
     def rmr(self, juicefs, file_name):
@@ -419,7 +419,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         # assert(not os.path.exists(path))
         print('rmr succeed')
 
-    @rule(juicefs=st.sampled_from(JFS_BINS), 
+    @rule(juicefs=st.sampled_from(JFS_BINS),
     force=st.booleans())
     @precondition(lambda self: self.mounted)
     def umount(self, juicefs, force):
@@ -440,9 +440,9 @@ class JuicefsMachine(RuleBasedStateMachine):
         assume(run_cmd(f'{juicefs} --help | grep destroy') == 0)
         print('start destroy')
         output = subprocess.run([juicefs, 'status', JuicefsMachine.META_URL], check=True, stdout=subprocess.PIPE).stdout.decode()
-        if 'get timestamp too slow' in output: 
+        if 'get timestamp too slow' in output:
             # remove the first line caust it is tikv log message
-            output = '\n'.join(output.split('\n')[1:]) 
+            output = '\n'.join(output.split('\n')[1:])
         print(f'status output: {output}')
         uuid = json.loads(output.replace("'", '"'))['Setting']['UUID']
         print(f'uuid is: {uuid}')
@@ -456,7 +456,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         self.formatted_by = ''
         print('destroy succeed')
 
-    @rule(file_name=st.sampled_from(['myfile1', 'myfile2']), 
+    @rule(file_name=st.sampled_from(['myfile1', 'myfile2']),
         data=st.binary() )
     @precondition(lambda self: self.mounted )
     def write_and_read(self, file_name, data):
@@ -469,7 +469,7 @@ class JuicefsMachine(RuleBasedStateMachine):
             result = f.read()
         assert str(result) == str(data)
         print('write and read succeed')
-    
+
     def write_rand_files(self, path, seed):
         count = 50
         if os.path.isdir(path):
@@ -535,7 +535,7 @@ class JuicefsMachine(RuleBasedStateMachine):
             run_jfs_cmd([JuicefsMachine.JFS_BINS[1], 'config', JuicefsMachine.META_URL, '--access-key', 'root', '--secret-key', 'root'])
         elif storage == 'postgres':
             run_jfs_cmd([JuicefsMachine.JFS_BINS[1], 'config', JuicefsMachine.META_URL, '--access-key', 'postgres', '--secret-key', 'postgres'])
-        
+
         os.remove('dump.json')
 
     @rule(juicefs=st.sampled_from(JFS_BINS))
@@ -551,7 +551,7 @@ class JuicefsMachine(RuleBasedStateMachine):
     #  block_size=st.integers(min_value=1, max_value=32),
     #  big_file_size=st.integers(min_value=100, max_value=200),
     #  small_file_size=st.integers(min_value=1, max_value=256),
-    #  small_file_count=st.integers(min_value=100, max_value=256), 
+    #  small_file_count=st.integers(min_value=100, max_value=256),
     #  threads=st.integers(min_value=1, max_value=100))
     @precondition(lambda self: self.mounted and False)
     def bench(self, juicefs, block_size, big_file_size, small_file_size, small_file_count, threads):
@@ -572,8 +572,8 @@ class JuicefsMachine(RuleBasedStateMachine):
         print('bench succeed')
 
     @rule(juicefs=st.sampled_from(JFS_BINS),
-        threads=st.integers(min_value=1, max_value=100), 
-        background = st.booleans(), 
+        threads=st.integers(min_value=1, max_value=100),
+        background = st.booleans(),
         from_file = st.booleans(),
         directory = st.booleans() )
     @precondition(lambda self: self.mounted)
@@ -608,7 +608,7 @@ class JuicefsMachine(RuleBasedStateMachine):
                 write_block(JuicefsMachine.MOUNT_POINT, f'{JuicefsMachine.MOUNT_POINT}/file_to_warmup', 1048576, 100)
                 assert os.path.exists(f'{JuicefsMachine.MOUNT_POINT}/file_to_warmup')
                 options.append(f'{JuicefsMachine.MOUNT_POINT}/file_to_warmup')
-                
+
         run_jfs_cmd(options)
         # print(output)
         print('warmup succeed')
@@ -616,8 +616,8 @@ class JuicefsMachine(RuleBasedStateMachine):
         # assert output.decode('utf8').split('\n')[0].startswith('Warming up bytes: ')
 
     @rule(
-        juicefs = st.sampled_from(JFS_BINS), 
-        compact=st.booleans(), 
+        juicefs = st.sampled_from(JFS_BINS),
+        compact=st.booleans(),
         delete=st.booleans(),
         threads=st.integers(min_value=1, max_value=100) )
     @precondition(lambda self: self.formatted)
@@ -636,44 +636,44 @@ class JuicefsMachine(RuleBasedStateMachine):
         print('gc succeed')
 
 
-    @rule(juicefs=st.sampled_from(JFS_BINS), 
-        get_timeout=st.integers(min_value=30, max_value=59), 
-        put_timeout=st.integers(min_value=30, max_value=59), 
-        io_retries=st.integers(min_value=5, max_value=15), 
-        max_uploads=st.integers(min_value=1, max_value=100), 
-        max_deletes=st.integers(min_value=1, max_value=100), 
-        buffer_size=st.integers(min_value=100, max_value=1000), 
-        upload_limit=st.integers(min_value=0, max_value=1000), 
-        download_limit=st.integers(min_value=0, max_value=1000), 
-        prefetch=st.integers(min_value=0, max_value=100), 
+    @rule(juicefs=st.sampled_from(JFS_BINS),
+        get_timeout=st.integers(min_value=30, max_value=59),
+        put_timeout=st.integers(min_value=30, max_value=59),
+        io_retries=st.integers(min_value=5, max_value=15),
+        max_uploads=st.integers(min_value=1, max_value=100),
+        max_deletes=st.integers(min_value=1, max_value=100),
+        buffer_size=st.integers(min_value=100, max_value=1000),
+        upload_limit=st.integers(min_value=0, max_value=1000),
+        download_limit=st.integers(min_value=0, max_value=1000),
+        prefetch=st.integers(min_value=0, max_value=100),
         writeback=st.just(False),
-        upload_delay=st.sampled_from([0, 2]), 
+        upload_delay=st.sampled_from([0, 2]),
         cache_dir=st.sampled_from(['cache1', 'cache2']),
-        cache_size=st.integers(min_value=0, max_value=1024000), 
-        free_space_ratio=st.floats(min_value=0.1, max_value=0.5), 
+        cache_size=st.integers(min_value=0, max_value=1024000),
+        free_space_ratio=st.floats(min_value=0.1, max_value=0.5),
         cache_partial_only=st.booleans(),
         backup_meta=st.integers(min_value=300, max_value=1000),
-        heartbeat=st.integers(min_value=5, max_value=30), 
+        heartbeat=st.integers(min_value=5, max_value=30),
         read_only=st.booleans(),
         no_bgjob=st.booleans(),
         open_cache=st.integers(min_value=0, max_value=100),
-        attr_cache=st.integers(min_value=1, max_value=10), 
-        entry_cache=st.integers(min_value=1, max_value=10), 
-        dir_entry_cache=st.integers(min_value=1, max_value=10), 
+        attr_cache=st.integers(min_value=1, max_value=10),
+        entry_cache=st.integers(min_value=1, max_value=10),
+        dir_entry_cache=st.integers(min_value=1, max_value=10),
         access_log=st.sampled_from(['accesslog1', 'accesslog2']),
         no_banner=st.booleans(),
-        multi_buckets=st.booleans(), 
+        multi_buckets=st.booleans(),
         keep_etag=st.booleans(),
-        umask=st.sampled_from(['022', '755']), 
-        metrics=st.sampled_from(['127.0.0.1:9567', '127.0.0.1:9568']), 
-        consul=st.sampled_from(['127.0.0.1:8500', '127.0.0.1:8501']), 
+        umask=st.sampled_from(['022', '755']),
+        metrics=st.sampled_from(['127.0.0.1:9567', '127.0.0.1:9568']),
+        consul=st.sampled_from(['127.0.0.1:8500', '127.0.0.1:8501']),
         sub_dir=st.sampled_from(['dir1', 'dir2']),
         port=st.integers(min_value=9001, max_value=10000)
     )
     @precondition(lambda self: self.formatted )
-    def gateway(self, juicefs, get_timeout, put_timeout, io_retries, max_uploads, max_deletes, buffer_size, upload_limit, 
-        download_limit, prefetch, writeback, upload_delay, cache_dir, cache_size, free_space_ratio, cache_partial_only, 
-        backup_meta,heartbeat, read_only, no_bgjob, open_cache, attr_cache, entry_cache, dir_entry_cache, access_log, 
+    def gateway(self, juicefs, get_timeout, put_timeout, io_retries, max_uploads, max_deletes, buffer_size, upload_limit,
+        download_limit, prefetch, writeback, upload_delay, cache_dir, cache_size, free_space_ratio, cache_partial_only,
+        backup_meta,heartbeat, read_only, no_bgjob, open_cache, attr_cache, entry_cache, dir_entry_cache, access_log,
         no_banner, multi_buckets, keep_etag, umask, metrics, consul, sub_dir, port):
         assume (self.greater_than_version_formatted(juicefs))
         assume(not is_port_in_use(port))
@@ -683,7 +683,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         os.environ['MINIO_ROOT_USER'] = 'admin'
         os.environ['MINIO_ROOT_PASSWORD'] = '12345678'
         options = [juicefs, 'gateway', JuicefsMachine.META_URL, f'localhost:{port}']
-        
+
         options.extend(['--attr-cache', str(attr_cache)])
         options.extend(['--entry-cache', str(entry_cache)])
         options.extend(['--dir-entry-cache', str(dir_entry_cache)])
@@ -744,8 +744,8 @@ class JuicefsMachine(RuleBasedStateMachine):
         print('gateway succeed')
 
 
-    @rule(juicefs = st.sampled_from(JFS_BINS), 
-        port=st.integers(min_value=10001, max_value=11000)) 
+    @rule(juicefs = st.sampled_from(JFS_BINS),
+        port=st.integers(min_value=10001, max_value=11000))
     @precondition(lambda self: self.formatted )
     def webdav(self, juicefs, port):
         assume (self.greater_than_version_formatted(juicefs))
@@ -754,7 +754,7 @@ class JuicefsMachine(RuleBasedStateMachine):
         if JuicefsMachine.META_URL.startswith('badger://'):
             assume(not self.mounted)
         print('start webdav')
-        
+
         options = [juicefs, 'webdav', JuicefsMachine.META_URL, f'localhost:{port}']
         proc = subprocess.Popen(options)
         time.sleep(2.0)

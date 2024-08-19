@@ -20,10 +20,10 @@ jobs:
       fail-fast: false
       matrix:
         meta: ['redis']
-        fio_job : ['big-file-sequential-read', 'big-file-sequential-write',  'big-file-multi-read-4', 
-          'big-file-multi-write-4', 'big-file-rand-read-256k', 'big-file-random-write-256k', 
-          'small-file-seq-read-256k', 'small-file-seq-write-256k', 'small-file-multi-read-4', 
-          'small-file-multi-write-4'] 
+        fio_job : ['big-file-sequential-read', 'big-file-sequential-write',  'big-file-multi-read-4',
+          'big-file-multi-write-4', 'big-file-rand-read-256k', 'big-file-random-write-256k',
+          'small-file-seq-read-256k', 'small-file-seq-write-256k', 'small-file-multi-read-4',
+          'small-file-multi-write-4']
 
     steps:
       - name: Checkout
@@ -36,7 +36,7 @@ jobs:
         with:
           go-version: 'oldstable'
           cache: true
-            
+
       - name: Build linux target
         run: |
           make juicefs
@@ -45,14 +45,14 @@ jobs:
         run: |
           sudo .github/scripts/apt_install.sh fio
           wget -q https://dl.minio.io/client/mc/release/linux-amd64/mc
-          chmod +x mc 
+          chmod +x mc
 
       - name: Start meta and storage
         run: |
           chmod +x .github/scripts/start_meta_engine.sh
           source .github/scripts/start_meta_engine.sh
           start_meta_engine ${{matrix.meta}} minio
-        
+
       - name: Download juicefs bin
         id: download
         run: |
@@ -61,7 +61,7 @@ jobs:
           echo "latest_url=$latest_url" >> $GITHUB_OUTPUT
           urls=("juicefs"  $latest_url)
           for url in "${urls[@]}"; do
-            if [[ $url == http* ]]; then  
+            if [[ $url == http* ]]; then
               wget -q $url
               bin_name=$(echo $(basename $url) | sed 's/.tar.gz//g')
               mkdir jfs || true
@@ -125,7 +125,7 @@ jobs:
           echo fio_job is $fio_job
           echo "fio_job=$fio_job" >> $GITHUB_OUTPUT
 
-      - name: Fio Benchmark 
+      - name: Fio Benchmark
         run: |
           # set -o pipefail
           echo "Fio Benchmark"
@@ -144,8 +144,8 @@ jobs:
           echo fio_job is $fio_job
 
           for url in "${urls[@]}"; do
-            bin_name=$(echo $(basename $url) | sed 's/.tar.gz//g') 
-            echo version: $(./$bin_name -V) 
+            bin_name=$(echo $(basename $url) | sed 's/.tar.gz//g')
+            echo version: $(./$bin_name -V)
             juicefs_version=$(./$bin_name -V|cut -b 17- | sed 's/:/-/g')
             name=$(echo $fio_job | awk -F: '{print $1}' | xargs)
             fio_arg=$(echo $fio_job | awk -F: '{print $2}' | xargs)
@@ -158,14 +158,14 @@ jobs:
               block_size=$(echo $name | awk -F- '{print $NF}' | xargs)
               echo block_size is $block_size
               fio --name=big-file-rand-read-preload --directory=$mount_point --rw=randread --refill_buffers --size=1G --filename=randread.bin --bs=$block_size --pre_read=1
-              sudo sync 
+              sudo sync
               sudo bash -c  "echo 3 > /proc/sys/vm/drop_caches"
             fi
             echo "start fio"
             fio --name=$name --directory=$mount_point $fio_arg | tee "$name-$juicefs_version.log"
             echo "finish fio"
             bw_str=$(tail -1 $name-$juicefs_version.log | awk '{print $2}' | awk -F '=' '{print $2}' )
-            bw=$(echo $bw_str | sed 's/.iB.*//g') 
+            bw=$(echo $bw_str | sed 's/.iB.*//g')
             if [[ $bw_str == *KiB* ]]; then
               bw=$(echo "scale=2; $bw/1024.0" | bc -l)
             elif [[ $bw_str == *GiB* ]]; then
@@ -186,7 +186,7 @@ jobs:
       - name: log
         if: always()
         shell: bash
-        run: | 
+        run: |
           if [ -f ~/.juicefs/juicefs.log ]; then
             tail -300 ~/.juicefs/juicefs.log
             grep "<FATAL>:" ~/.juicefs/juicefs.log && exit 1 || true

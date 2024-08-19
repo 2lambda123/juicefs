@@ -32,7 +32,7 @@ test_total_capacity()
 
     ./juicefs rmr /jfs/.trash
     sleep $VOLUME_QUOTA_FLUSH_INTERVAL
-    echo a | tee -a /jfs/test3 
+    echo a | tee -a /jfs/test3
 
     sleep $VOLUME_QUOTA_FLUSH_INTERVAL
     ln /jfs/test2 /jfs/test4
@@ -156,7 +156,7 @@ test_dir_capacity(){
 
 test_dir_inodes(){
     prepare_test
-    ./juicefs format $META_URL myjfs 
+    ./juicefs format $META_URL myjfs
     ./juicefs mount -d $META_URL /jfs --heartbeat $HEARTBEAT_INTERVAL
     mkdir -p /jfs/d
     ./juicefs quota set $META_URL --path /d --inodes 1000
@@ -189,7 +189,7 @@ test_dir_inodes(){
 
 test_sub_dir(){
     prepare_test
-    ./juicefs format $META_URL myjfs 
+    ./juicefs format $META_URL myjfs
     ./juicefs mount -d $META_URL /jfs --heartbeat $HEARTBEAT_INTERVAL
     mkdir -p /jfs/d
     ./juicefs quota set $META_URL --path /d --inodes 1000 --capacity 1
@@ -219,12 +219,12 @@ test_sub_dir(){
 
 test_dump_load(){
     prepare_test
-    ./juicefs format $META_URL myjfs 
+    ./juicefs format $META_URL myjfs
     ./juicefs mount -d $META_URL /jfs --heartbeat $HEARTBEAT_INTERVAL
     mkdir -p /jfs/d
     ./juicefs quota set $META_URL --path /d --inodes 1000 --capacity 1
     sleep $((HEARTBEAT_INTERVAL+1))
-    ./juicefs dump --log-level error $META_URL > dump.json 
+    ./juicefs dump --log-level error $META_URL > dump.json
     umount_jfs /jfs $META_URL
     python3 .github/scripts/flush_meta.py $META_URL
     ./juicefs load $META_URL dump.json
@@ -248,7 +248,7 @@ test_dump_load(){
 
 test_hard_link(){
     prepare_test
-    ./juicefs format $META_URL myjfs 
+    ./juicefs format $META_URL myjfs
     ./juicefs mount -d $META_URL /jfs --heartbeat $HEARTBEAT_INTERVAL
     mkdir -p /jfs/d
     dd if=/dev/zero of=/jfs/file bs=1G count=1
@@ -266,7 +266,7 @@ test_hard_link(){
 
 test_check_and_repair_quota(){
     prepare_test
-    ./juicefs format $META_URL myjfs 
+    ./juicefs format $META_URL myjfs
     ./juicefs mount -d $META_URL /jfs --heartbeat $HEARTBEAT_INTERVAL
     mkdir -p /jfs/d
     ./juicefs quota set $META_URL --path /d --capacity 1
@@ -281,7 +281,7 @@ test_check_and_repair_quota(){
 }
 
 wait_until()
-{   
+{
     key=$1
     value=$2
     echo "wait until $key becomes $value"
