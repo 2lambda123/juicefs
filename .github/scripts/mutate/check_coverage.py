@@ -32,7 +32,7 @@ def parse_coverage(file):
 				for i in range(start_line, end_line+1):
 					cov.add(i)
 	return cov
-	
+
 if __name__ == '__main__':
 	# MUTATE_ORIGINAL=../cmd/meta/xattr.go MUTATE_CHANGED=../cmd/meta/xattr_copy.go COVERAGE_FILE=xattr-cov.out python3 check_coverage.py
 	# MUTATE_ORIGINAL=cmd/meta/xattr.go MUTATE_CHANGED=/var/folders/jz/mvf43cj13sl4l17z1yy8m92h0000gn/T/go-mutesting-3937777628/xattr.go.4 COVERAGE_FILE=cmd/meta/xattr-cov.out python3 scripts/check_coverage.py

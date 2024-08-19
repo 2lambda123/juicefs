@@ -57,7 +57,7 @@ jobs:
 
       - name: Build
         uses: ./.github/actions/build
-        with: 
+        with:
           target: "$TARGET"
           # useBeta: true
 
