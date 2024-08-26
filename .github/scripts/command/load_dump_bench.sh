@@ -110,5 +110,3 @@ prepare_test()
 }
 
 source .github/scripts/common/run_test.sh && run_test $@
-
-

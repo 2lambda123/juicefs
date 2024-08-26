@@ -805,4 +805,3 @@ if __name__ == '__main__':
     if COMPARE:
         compare_content(ROOT_DIR1, ROOT_DIR2)
         compare_stat(ROOT_DIR1, ROOT_DIR2)
-
