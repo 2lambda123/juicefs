@@ -40,4 +40,3 @@ if __name__ == '__main__':
     taget_classes = os.environ['TARGET_CLASSES']
     time_constant = os.environ['TIME_CONSTANT']
     modify_pom(pom_path, taget_tests, taget_classes, time_constant)
-
