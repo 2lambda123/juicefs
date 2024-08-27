@@ -21,4 +21,3 @@ if __name__ == '__main__':
         print('test file name is empty', file=sys.stderr)
         exit(1)
     print(parse_test_jobs(test_file_path))
-
